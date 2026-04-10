@@ -203,8 +203,8 @@ if (typeof THREE !== 'undefined') {
             material.color.setRGB(r/255, g/255, b/255);
 
             // Dynamic Rotation based on Evolution State
-            // Grid rotates slowly, Globe rotates rapidly
-            particlesMesh.rotation.y = elapsedTime * (0.05 + morphFactor * 0.2) + mouseX * 0.6;
+            // Speed reduced but still dynamic based on form
+            particlesMesh.rotation.y = elapsedTime * (0.02 + morphFactor * 0.04) + mouseX * 0.6;
             particlesMesh.rotation.x = mouseY * 0.6;
 
             // Camera Zoom & Pan on scroll
