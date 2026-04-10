@@ -324,3 +324,56 @@ function initMobile3D(canvas) {
     });
 }
 
+// --- Resume Download functionality ---
+function triggerResumeDownload() {
+    if (typeof html2pdf === 'undefined') {
+        alert("PDF Library is not loaded yet. Please try again in a moment.");
+        return;
+    }
+
+    const btn = document.getElementById('downloadResumeBtn');
+    if (!btn || btn.classList.contains('is-downloading')) return;
+
+    btn.classList.add('is-downloading');
+    
+    // To prevent html2canvas from cropping the image when the original is off-screen or on mobile,
+    // we clone the element and place it at the top-left of the document behind the background.
+    const originalElement = document.getElementById('resume-container');
+    
+    const cloneWrapper = document.createElement('div');
+    cloneWrapper.style.position = 'absolute';
+    cloneWrapper.style.top = '0';
+    cloneWrapper.style.left = '0';
+    cloneWrapper.style.zIndex = '-9999';
+    cloneWrapper.style.background = '#ffffff';
+    cloneWrapper.style.width = '210mm';
+    cloneWrapper.style.minHeight = '297mm';
+    
+    const cloneElement = originalElement.cloneNode(true);
+    // Ensure the clone has no display/visibility restrictions
+    cloneElement.style.display = 'block';
+    cloneElement.style.visibility = 'visible';
+    
+    cloneWrapper.appendChild(cloneElement);
+    document.body.appendChild(cloneWrapper);
+
+    const opt = {
+        margin:       0,
+        filename:     'Vishvajit_Surwase_Resume.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false, windowWidth: 794 }, // 794px is roughly A4 width
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().from(cloneElement).set(opt).save().then(() => {
+        document.body.removeChild(cloneWrapper);
+        btn.classList.remove('is-downloading');
+    }).catch(err => {
+        console.error("Resume download error:", err);
+        if (document.body.contains(cloneWrapper)) {
+            document.body.removeChild(cloneWrapper);
+        }
+        btn.classList.remove('is-downloading');
+        alert("An error occurred while generating the resume. Please try again.");
+    });
+}
