@@ -137,7 +137,9 @@ h1, h2, h3, h4 {
 }
 
 .glitch-title {
-    font-size: 5rem;
+    font-size: clamp(2.2rem, 8vw, 5rem);
+    line-height: 1.1;
+    word-wrap: break-word;
     margin-bottom: 1rem;
     position: relative;
     color: var(--text-primary);
@@ -657,8 +659,11 @@ footer {
 
 /* Responsive */
 @media screen and (max-width: 768px) {
+    .hero {
+        padding: 0 5%;
+    }
     .glitch-title {
-        font-size: 3rem;
+        font-size: 2.2rem;
     }
     .role-container {
         font-size: 1rem;
