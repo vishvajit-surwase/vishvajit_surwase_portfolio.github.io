@@ -3,325 +3,590 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vishvajit Surwase - Resume</title>
-    
-    <!-- Fonts -->
+    <title>Vishvajit Surwase – Resume | Automation Engineer & AI Developer</title>
+    <meta name="description" content="Professional resume of Vishvajit Surwase – Automation Engineer, RPA Bot Developer, and AI Developer with 1 year of experience at Cyncly.">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        :root {
-            --bg-main: #0A1128;
-            --text-primary: #f0f0f5;
-            --text-secondary: #a0a0b8;
-            --accent-cyan: #00f0ff;
-            --accent-magenta: #ff0055;
-            --font-heading: 'Orbitron', sans-serif;
-            --font-ui: 'Rajdhani', sans-serif;
-            --font-body: 'Inter', sans-serif;
-        }
+        /* ============ PAGE SHELL ============ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: #050814; /* Darker outer bg */
-            color: var(--text-primary);
-            font-family: var(--font-body);
-            margin: 0;
-            padding: 2rem;
+            background: #0f1117;
+            font-family: 'Inter', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 2rem 1rem 4rem;
+            min-height: 100vh;
         }
 
-        /* Controls outside the resume */
+        /* ============ CONTROLS ============ */
         .controls {
-            margin-bottom: 2rem;
             display: flex;
             gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .btn {
-            background: rgba(0, 240, 255, 0.15);
-            border: 1px solid var(--accent-cyan);
-            color: var(--text-primary);
-            padding: 0.8rem 1.5rem;
-            font-family: var(--font-ui);
-            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.6rem;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
             font-weight: 600;
-            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2) inset;
+            transition: all 0.25s ease;
             text-decoration: none;
+            border: none;
         }
 
-        .btn:hover {
-            background: var(--accent-cyan);
-            color: #0A1128;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid rgba(99,179,237,0.5);
+            color: #90cdf4;
         }
+        .btn-outline:hover { background: rgba(99,179,237,0.1); border-color: #90cdf4; }
 
-        /* Resume A4 Canvas */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(102,126,234,0.4);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(102,126,234,0.5); }
+
+
+        /* ============ RESUME PAPER ============ */
         #resume-container {
-            background-color: var(--bg-main);
-            width: 210mm; /* A4 width */
-            min-height: 297mm; /* A4 height */
-            padding: 20mm;
-            box-sizing: border-box;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
-            position: relative;
-            border: 1px solid rgba(0, 240, 255, 0.2);
+            background: #ffffff;
+            width: 210mm;
+            min-height: 297mm;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            border-radius: 3px;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Cyber grid overlay for resume */
+        /* Left accent strip */
         #resume-container::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-            background-size: 20px 20px;
-            z-index: 1;
-            pointer-events: none;
+            top: 0; left: 0;
+            width: 5px; height: 100%;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         }
 
-        .resume-content {
-            position: relative;
-            z-index: 2;
+        .resume-body {
+            padding: 11mm 13mm 12mm 17mm;
+            color: #1a202c;
         }
 
-        /* Typography */
-        h1 {
-            font-family: var(--font-heading);
-            color: var(--accent-cyan);
-            font-size: 2.5rem;
-            margin: 0 0 0.5rem 0;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        /* ============ HEADER ============ */
+        .header {
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 9px;
+            margin-bottom: 10px;
         }
 
-        h2 {
-            font-family: var(--font-ui);
-            color: var(--text-primary);
-            font-size: 1.5rem;
-            margin: 1.5rem 0 1rem 0;
-            padding-bottom: 5px;
-            border-bottom: 1px solid var(--accent-cyan);
-            display: flex;
-            align-items: center;
+        .header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26pt;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #1a202c;
+            line-height: 1.1;
         }
 
-        h3 {
-            font-family: var(--font-ui);
-            color: var(--text-primary);
-            font-size: 1.2rem;
-            margin: 0 0 0.2rem 0;
+        .header .title-tag {
+            font-size: 10.5pt;
+            font-weight: 600;
+            color: #667eea;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+            margin-bottom: 7px;
         }
 
-        p {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin: 0 0 0.5rem 0;
-            color: var(--text-secondary);
-        }
-
-        /* Header Info */
-        .contact-info {
+        .contact-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
-            font-family: var(--font-ui);
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-        }
-
-        .contact-info span {
-            display: flex;
+            gap: 4px 18px;
+            font-size: 8.5pt;
+            color: #4a5568;
             align-items: center;
-            gap: 5px;
         }
 
-        .highlight {
-            color: var(--accent-cyan);
-        }
-        
-        .magenta-accent {
-            color: var(--accent-magenta);
+        .contact-row .sep { color: #cbd5e0; }
+
+        .contact-row a {
+            color: #4a5568;
+            text-decoration: none;
+            font-weight: 500;
         }
 
-        /* Layout Grid */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
+        .contact-row a:hover { color: #667eea; }
 
-        /* Lists */
-        ul {
-            margin: 0 0 1rem 0;
-            padding-left: 20px;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        li {
-            margin-bottom: 4px;
-        }
-
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 5px;
-        }
-
-        .date-badge {
-            font-family: var(--font-ui);
-            background: rgba(0, 240, 255, 0.1);
-            color: var(--accent-cyan);
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 0.9rem;
-            border: 1px solid rgba(0, 240, 255, 0.3);
-        }
-
-        .tech-tags {
-            font-family: var(--font-ui);
-            font-size: 0.85rem;
-            color: var(--accent-magenta);
+        /* ============ SECTION HEADERS ============ */
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 9pt;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #667eea;
+            border-bottom: 1.5px solid #667eea;
+            padding-bottom: 3px;
+            margin-top: 12px;
             margin-bottom: 8px;
         }
 
-        .box-section {
-            border-left: 2px solid var(--accent-cyan);
-            padding-left: 15px;
-            margin-bottom: 15px;
+        /* ============ SUMMARY ============ */
+        .summary p {
+            font-size: 9pt;
+            line-height: 1.65;
+            color: #2d3748;
+            text-align: justify;
+        }
+
+        /* ============ EXPERIENCE ============ */
+        .exp-item { margin-bottom: 9px; }
+
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2px;
+        }
+
+        .exp-role {
+            font-size: 10.5pt;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .exp-company {
+            font-size: 9.5pt;
+            font-weight: 500;
+            color: #667eea;
+        }
+
+        .exp-date {
+            font-size: 8.5pt;
+            font-weight: 600;
+            color: #718096;
+            white-space: nowrap;
+            padding: 1px 7px;
+            background: #f7f7fc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin-top: 1px;
+        }
+
+        .exp-location {
+            font-size: 8pt;
+            color: #a0aec0;
+            margin-bottom: 4px;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            font-size: 9pt;
+            line-height: 1.6;
+            color: #2d3748;
+            padding-left: 13px;
+            position: relative;
+            margin-bottom: 2px;
+        }
+
+        .bullet-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-size: 8pt;
+            top: 1px;
+        }
+
+        /* ============ PROJECTS ============ */
+        .project-item {
+            margin-bottom: 9px;
+            padding-left: 10px;
+            border-left: 2.5px solid #e9d8fd;
+        }
+
+        .project-item.flagship {
+            border-left-color: #667eea;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .project-name {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .project-name.flagship-label {
+            color: #553c9a;
+        }
+
+        .ai-badge {
+            font-size: 7pt;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 1px 6px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .tech-stack {
+            font-size: 8pt;
+            font-weight: 600;
+            color: #805ad5;
+            margin: 2px 0 3px;
+            letter-spacing: 0.2px;
+        }
+
+        .project-desc {
+            font-size: 8.8pt;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+
+        /* ============ SKILLS ============ */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px 20px;
+        }
+
+        .skill-row {
+            display: flex;
+            align-items: baseline;
+            font-size: 8.8pt;
+            line-height: 1.55;
+            gap: 5px;
+        }
+
+        .skill-cat {
+            font-weight: 700;
+            color: #2d3748;
+            white-space: nowrap;
+            min-width: 105px;
+        }
+
+        .skill-val {
+            color: #4a5568;
+        }
+
+        /* ============ EDUCATION ============ */
+        .edu-item { margin-bottom: 7px; }
+
+        .edu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .edu-degree {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .edu-year {
+            font-size: 8.5pt;
+            font-weight: 600;
+            color: #718096;
+        }
+
+        .edu-college {
+            font-size: 8.8pt;
+            color: #4a5568;
+        }
+
+        /* ============ CERTS + ACTIVITIES ============ */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px 20px;
+        }
+
+        .cert-list, .act-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .cert-list li, .act-list li {
+            font-size: 8.8pt;
+            color: #2d3748;
+            padding-left: 12px;
+            position: relative;
+            margin-bottom: 2px;
+            line-height: 1.5;
+        }
+
+        .cert-list li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-size: 7pt;
+            top: 2px;
+        }
+
+        .act-list li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: #764ba2;
+            font-size: 6pt;
+            top: 3px;
+        }
+
+        .mini-title {
+            font-size: 9pt;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        /* ============ PRINT ============ */
+        @media print {
+            body { background: #fff; padding: 0; }
+            .controls { display: none; }
+            #resume-container { box-shadow: none; width: 100%; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Controls -->
     <div class="controls">
-        <a href="index.html" class="btn">← Back to Portfolio</a>
-        <button class="btn" onclick="downloadPDF()">⬇ Download PDF</button>
+        <a href="index.html" class="btn btn-outline">← Back to Portfolio</a>
+        <button class="btn btn-primary" onclick="downloadPDF()">⬇ Download PDF</button>
     </div>
 
-    <!-- Resume Document element -->
+    <!-- ===================== RESUME ===================== -->
     <div id="resume-container">
-        <div class="resume-content">
-            
-            <h1>Vishvajit Surwase</h1>
-            <div class="contact-info">
-                <span class="magenta-accent">Automation Engineer & RPA Bot Developer</span>
-                <span>|</span>
-                <span>vishvajit1686@gmail.com</span>
-                <span>|</span>
-                <span>+91 8459269911</span>
-                <span>|</span>
-                <span>Solapur, India</span>
-                <span>|</span>
-                <span>linkedin.com/in/vishvajit-surwase</span>
+        <div class="resume-body">
+
+            <!-- HEADER -->
+            <div class="header">
+                <h1>Vishvajit Surwase</h1>
+                <div class="title-tag">Automation Engineer &amp; RPA Bot Developer | AI Developer | Data Analytics</div>
+                <div class="contact-row">
+                    <span>📍 Solapur, India</span>
+                    <span class="sep">|</span>
+                    <span>📞 +91 8459269911</span>
+                    <span class="sep">|</span>
+                    <span>✉ vishvajit1686@gmail.com</span>
+                    <span class="sep">|</span>
+                    <a href="https://www.linkedin.com/in/vishvajit-surwase-5923b2253" target="_blank">Vishvajit Surwase (LinkedIn)</a>
+                    <span class="sep">|</span>
+                    <a href="https://vishvajit-surwase.github.io/vishvajit_surwase_portfolio.github.io/" target="_blank">Vishvajit Surwase Portfolio</a>
+                </div>
             </div>
 
-            <p style="text-align: justify; color: var(--text-primary); font-size: 1rem;">
-                Detail-oriented Automation Engineer and RPA Bot Developer with hands-on experience designing, developing, and deploying robust automation solutions. I specialize in <span class="highlight">Python-based automation</span>, leveraging RPA tools to reduce manual engineering workload and significantly improve corporate time efficiency. My expertise extends to data analytics using Pandas and modern AI-assisted development.
-            </p>
+            <!-- PROFESSIONAL SUMMARY -->
+            <div class="section-title">Professional Summary</div>
+            <div class="summary">
+                <p>
+                    Results-driven <strong>Automation Engineer and RPA Bot Developer</strong> with <strong>1 year of hands-on industry experience</strong> at Cyncly, specializing in Python-based automation, RPA bot development, and end-to-end data pipeline engineering. Demonstrated ability to architect scalable automation solutions that drastically reduce operational workload and eliminate human error. Recently expanded expertise into <strong>AI/ML Engineering</strong> — building production-grade systems with FastAPI, Streamlit, scikit-learn, PyTorch LSTM, and Groq LLM integration. Passionate about transforming complex data into actionable business intelligence and leveraging AI to drive meaningful product outcomes.
+                </p>
+            </div>
 
-            <h2>EXPERIENCE</h2>
-            <div class="box-section">
-                <div class="job-header">
-                    <h3>RPA Bot Developer / Automation Engineer <span style="font-weight: normal; color: var(--text-secondary);">@ Cyncly</span></h3>
-                    <span class="date-badge">1 Year</span>
+            <!-- WORK EXPERIENCE -->
+            <div class="section-title">Professional Experience</div>
+
+            <div class="exp-item">
+                <div class="exp-header">
+                    <div>
+                        <div class="exp-role">RPA Bot Developer / Automation Engineer</div>
+                        <div class="exp-company">Cyncly &nbsp;·&nbsp; Full-Time</div>
+                    </div>
+                    <div class="exp-date">2024 – 2025 &nbsp;|&nbsp; ~1 Year</div>
                 </div>
-                <ul>
-                    <li>Engineered and deployed robust Python-based RPA bots, drastically reducing manual workflows.</li>
-                    <li>Extensively reduced the operational workload for internal engineering teams, increasing overall time efficiency.</li>
-                    <li>Automated complex, repetitive business processes to accelerate turnaround times and eliminate human error.</li>
-                    <li>Harnessed Pandas for advanced data handling, intelligent validation, and automated report generation.</li>
-                    <li>Integrated AI tools strategically to accelerate development cycles and deliver cutting-edge solutions.</li>
+                <div class="exp-location">Remote / India</div>
+                <ul class="bullet-list">
+                    <li>Engineered and deployed production-grade Python-based RPA bots integrated with Design Flex CAD software, reducing manual engineering workflows by <strong>70%+</strong>.</li>
+                    <li>Reduced operational workload for internal engineering teams through end-to-end automation of complex, repetitive business processes, significantly increasing overall time efficiency and productivity.</li>
+                    <li>Automated catalog selection, UI interaction, feature extraction via OCR, and screenshot documentation in multi-step configuration workflows using <strong>PyWinAuto, OpenCV, and Tesseract OCR</strong>.</li>
+                    <li>Leveraged <strong>Pandas</strong> for advanced data handling, intelligent validation logic, and automated report generation, improving data accuracy across engineering operations.</li>
+                    <li>Integrated <strong>AI tools (ChatGPT, GitHub Copilot)</strong> strategically throughout the development lifecycle to accelerate coding, debugging, and delivery of automation solutions.</li>
+                    <li>Collaborated cross-functionally with internal engineering stakeholders to analyze business processes and design scalable automation architectures.</li>
                 </ul>
             </div>
 
-            <h2>PROJECTS</h2>
-            <div class="box-section">
-                <h3>Design Flex Automation Suite</h3>
-                <div class="tech-tags">Python | PyWinAuto | OpenCV | Tesseract OCR | Pandas | RPA</div>
-                <p>Developed an intelligent RPA bot to automate product configuration workflows in Design Flex CAD software. Handles catalog selection, feature extraction via OCR, configuration tree navigation, and automated screenshot documentation. Reduced manual processing time by 70%.</p>
-            </div>
-            
-            <div class="box-section">
-                <h3>AI-Powered Video Knowledge Extraction</h3>
-                <div class="tech-tags">Python | LangChain | Computer Vision | NLP | RAG</div>
-                <p>Intelligent system that converts videos into searchable PDFs with AI-powered Q&A capabilities using RAG architecture, OCR, and speech recognition. Achieved 3-4x performance improvement through concurrent processing.</p>
+            <!-- PROJECTS -->
+            <div class="section-title">Key Projects</div>
+
+            <!-- FLAGSHIP: Retail AI -->
+            <div class="project-item flagship">
+                <div class="project-header">
+                    <span class="project-name flagship-label">🏆 Retail Decision Intelligence System</span>
+                    <span class="ai-badge">FEATURED AI PROJECT</span>
+                </div>
+                <div class="tech-stack">Python · FastAPI · Streamlit · Pandas · scikit-learn · PyTorch (LSTM) · Groq LLM API · Plotly · SQL</div>
+                <div class="project-desc">
+                    Built a full-stack, production-grade <strong>AI-powered Retail Analytics Platform</strong> from scratch — an end-to-end Data Analytics Engineering system that converts raw CSV retail data into business-ready intelligence automatically.
+                </div>
+                <ul class="bullet-list" style="margin-top: 3px;">
+                    <li><strong>Smart ETL Pipeline:</strong> Auto-detects and maps messy CSV columns, cleans data, and logs every transformation step with a full audit trail.</li>
+                    <li><strong>Automated Data Quality Engine:</strong> Scores data out of 100 with A–F grade; detects nulls, duplicates, and business rule violations with a null heatmap.</li>
+                    <li><strong>Star Schema Data Modeling:</strong> Automatically builds Fact + Dimension tables (fact_sales, dim_product, dim_time, dim_location) with auto-generated Data Dictionary and Lineage Map.</li>
+                    <li><strong>Demand Forecasting (Local ML):</strong> Dual-model forecasting using <strong>Linear Regression and LSTM Neural Network</strong> — all inference runs locally with zero data sent to cloud.</li>
+                    <li><strong>Customer Intelligence:</strong> K-Means Clustering for spend-behavior segmentation; Apriori Algorithm for Market Basket Analysis (product affinity rules).</li>
+                    <li><strong>AI Business Analyst (Groq API):</strong> Natural language Q&amp;A over business data — only summarized context sent to LLM, never raw data; powered by Groq for low-latency inference.</li>
+                </ul>
             </div>
 
-            <div class="box-section">
-                <h3>Automation & Weather Apps</h3>
-                <p>Built automation bots for desktop and web-based tasks using PyWinAuto and Python. Developed real-time weather monitoring applications using APIs and data visualization techniques.</p>
+            <!-- Design Flex -->
+            <div class="project-item">
+                <div class="project-header">
+                    <span class="project-name">Design Flex Automation Suite</span>
+                </div>
+                <div class="tech-stack">Python · PyWinAuto · OpenCV · Tesseract OCR · Pandas · RPA</div>
+                <p class="project-desc">Developed an intelligent RPA bot to automate end-to-end product configuration workflows in Design Flex CAD software — catalog selection, OCR-based feature extraction, configuration tree navigation, and screenshot documentation. Reduced manual processing time by <strong>70%+</strong>.</p>
             </div>
 
-            <h2>SKILLS</h2>
-            <div class="grid-2">
+            <!-- Video AI -->
+            <div class="project-item">
+                <div class="project-header">
+                    <span class="project-name">AI-Powered Video Knowledge Extraction</span>
+                </div>
+                <div class="tech-stack">Python · LangChain · RAG Architecture · OCR · Speech Recognition · NLP · Concurrent Processing</div>
+                <p class="project-desc">Built an intelligent system that converts videos into searchable PDFs with AI-powered Q&amp;A using Retrieval-Augmented Generation (RAG), OCR, and speech recognition. Achieved <strong>3–4× performance improvement</strong> through concurrent processing pipeline.</p>
+            </div>
+
+            <!-- SKILLS -->
+            <div class="section-title">Technical Skills</div>
+            <div class="skills-grid">
+                <div class="skill-row"><span class="skill-cat">Languages:</span><span class="skill-val">Python, Dart (Flutter), HTML/CSS</span></div>
+                <div class="skill-row"><span class="skill-cat">AI / ML:</span><span class="skill-val">scikit-learn, PyTorch, LSTM, Groq API, LangChain, RAG</span></div>
+                <div class="skill-row"><span class="skill-cat">Automation / RPA:</span><span class="skill-val">PyWinAuto, Automation Frameworks, Bot Development</span></div>
+                <div class="skill-row"><span class="skill-cat">Data Engineering:</span><span class="skill-val">Pandas, ETL Pipelines, Star Schema, Data Quality</span></div>
+                <div class="skill-row"><span class="skill-cat">Backend / APIs:</span><span class="skill-val">FastAPI, Django, REST APIs</span></div>
+                <div class="skill-row"><span class="skill-cat">Frontend / Viz:</span><span class="skill-val">Streamlit, Plotly, Data Dashboards</span></div>
+                <div class="skill-row"><span class="skill-cat">Computer Vision:</span><span class="skill-val">OpenCV, Tesseract OCR, Image Processing</span></div>
+                <div class="skill-row"><span class="skill-cat">AI Productivity:</span><span class="skill-val">Prompt Engineering, ChatGPT, GitHub Copilot</span></div>
+                <div class="skill-row"><span class="skill-cat">Tools / Cloud:</span><span class="skill-val">Git, GitHub, Cloud Basics, VS Code</span></div>
+                <div class="skill-row"><span class="skill-cat">Soft Skills:</span><span class="skill-val">Problem-Solving, Analytical Thinking, Collaboration</span></div>
+            </div>
+
+            <!-- EDUCATION -->
+            <div class="section-title">Education</div>
+
+            <div class="edu-item">
+                <div class="edu-header">
+                    <span class="edu-degree">B.Tech – Electronics &amp; Telecommunication Engineering</span>
+                    <span class="edu-year">2021 – 2025</span>
+                </div>
+                <div class="edu-college">NK Orchid College of Engineering and Technology, Solapur</div>
+            </div>
+
+            <div class="edu-item">
+                <div class="edu-header">
+                    <span class="edu-degree">HSC – 75.83%</span>
+                    <span class="edu-year">Shri Shivaji Mahavidyalaya, Barshi</span>
+                </div>
+            </div>
+
+            <div class="edu-item">
+                <div class="edu-header">
+                    <span class="edu-degree">SSC – 59.20%</span>
+                    <span class="edu-year">Maharashtra Vidyalaya, Barshi</span>
+                </div>
+            </div>
+
+            <!-- CERTIFICATIONS + ACTIVITIES -->
+            <div class="section-title">Certifications &amp; Extra-Curricular</div>
+            <div class="two-col">
                 <div>
-                    <h3 class="highlight" style="font-size: 1rem; margin-bottom: 5px;">Programming & Automation</h3>
-                    <p>Python, Django, Pandas, PyWinAuto, RPA Bot Development, Automation Engineering</p>
-                    
-                    <h3 class="highlight" style="font-size: 1rem; margin-bottom: 5px; margin-top: 10px;">Tools & Mobile Dev</h3>
-                    <p>Flutter, Git, APIs, Cloud Basics</p>
+                    <div class="mini-title">Certifications (NPTEL)</div>
+                    <ul class="cert-list">
+                        <li>Joy of Python</li>
+                        <li>Data Analysis using Python</li>
+                        <li>Cloud Computing</li>
+                    </ul>
                 </div>
                 <div>
-                    <h3 class="highlight" style="font-size: 1rem; margin-bottom: 5px;">AI & Data Analytics</h3>
-                    <p>ChatGPT & Copilot, Prompt Engineering, AI-assisted Dev, Data Analytics, Data Processing</p>
-
-                    <h3 class="highlight" style="font-size: 1rem; margin-bottom: 5px; margin-top: 10px;">Soft Skills & Languages</h3>
-                    <p>Problem-Solving, Communication <br> English, Marathi, Hindi</p>
-                </div>
-            </div>
-
-            <h2>EDUCATION & CERTIFICATIONS</h2>
-            <div class="grid-2">
-                <div>
-                    <h3>B.Tech Electronics & Telecommunication</h3>
-                    <p>NK Orchid College of Engineering and Technology</p>
-                    <div class="date-badge" style="display: inline-block; margin-top: 5px;">2021 - 2025</div>
-                </div>
-                <div>
-                    <h3>Certifications</h3>
-                    <ul style="padding-left: 15px; margin-top: 5px;">
-                        <li>Joy of Python (NPTEL)</li>
-                        <li>Data Analysis using Python (NPTEL)</li>
-                        <li>Cloud Computing (NPTEL)</li>
+                    <div class="mini-title">Leadership &amp; Activities</div>
+                    <ul class="act-list">
+                        <li>Technical Head – College Student Committee</li>
+                        <li>Cultural Head – Hostel Committee</li>
+                        <li>Coordinator – College-Level Programming Competition</li>
                     </ul>
                 </div>
             </div>
 
-        </div>
-    </div>
+            <!-- LANGUAGES -->
+            <div style="margin-top: 9px; font-size: 8.8pt; color: #4a5568;">
+                <strong style="color: #2d3748;">Languages:</strong>&nbsp; English &nbsp;·&nbsp; Marathi &nbsp;·&nbsp; Hindi
+            </div>
+
+        </div><!-- /resume-body -->
+    </div><!-- /resume-container -->
+
 
     <script>
         function downloadPDF() {
+            const btn = document.querySelector('.btn-primary');
             const element = document.getElementById('resume-container');
+
+            btn.textContent = '⏳ Generating PDF...';
+            btn.disabled = true;
+
             const opt = {
                 margin:       0,
                 filename:     'Vishvajit_Surwase_Resume.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, logging: false },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                html2canvas:  {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    letterRendering: true,
+                    allowTaint: true
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            // Remove box shadow temporarily for the PDF to look perfectly flat
-            var originalBoxShadow = element.style.boxShadow;
+            // Remove shadow for clean PDF
+            const origShadow = element.style.boxShadow;
             element.style.boxShadow = 'none';
 
             html2pdf().from(element).set(opt).save().then(() => {
-                element.style.boxShadow = originalBoxShadow;
+                element.style.boxShadow = origShadow;
+                btn.textContent = '✓ Downloaded!';
+                setTimeout(() => {
+                    btn.textContent = '⬇ Download PDF';
+                    btn.disabled = false;
+                }, 2500);
+            }).catch(() => {
+                btn.textContent = '⬇ Download PDF';
+                btn.disabled = false;
             });
         }
     </script>
+
 </body>
 </html>

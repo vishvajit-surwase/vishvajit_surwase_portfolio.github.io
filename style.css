@@ -552,6 +552,21 @@ h4 {
     opacity: 1;
 }
 
+/* Flagship Project Highlight */
+.project-card.flagship {
+    border: 1px solid rgba(255, 0, 85, 0.4);
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.1);
+}
+
+.project-card.flagship.glowing-border::before {
+    background: linear-gradient(45deg, var(--accent-magenta), var(--accent-yellow), var(--accent-cyan));
+    opacity: 0.6;
+}
+
+.project-card.flagship:hover::before {
+    opacity: 1;
+}
+
 .project-type {
     font-family: var(--font-code);
     color: var(--accent-magenta);

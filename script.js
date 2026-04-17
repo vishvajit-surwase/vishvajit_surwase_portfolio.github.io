@@ -2,6 +2,7 @@
 const roles = [
     "Automation Engineer",
     "RPA Bot Developer",
+    "AI/ML Engineer",
     "Python Developer",
     "AI Enthusiast"
 ];
@@ -335,34 +336,59 @@ function triggerResumeDownload() {
     if (!btn || btn.classList.contains('is-downloading')) return;
 
     btn.classList.add('is-downloading');
-    
-    // To prevent html2canvas from cropping the image when the original is off-screen or on mobile,
-    // we clone the element and place it at the top-left of the document behind the background.
+
     const originalElement = document.getElementById('resume-container');
-    
+
+    // Create a fully rendered clone at a fixed A4 pixel width (794px @ 96dpi).
+    // Using opacity:0 instead of visibility:hidden so html2canvas can capture
+    // the full content without any clipping from parent overflow constraints.
     const cloneWrapper = document.createElement('div');
-    cloneWrapper.style.position = 'absolute';
-    cloneWrapper.style.top = '0';
-    cloneWrapper.style.left = '0';
-    cloneWrapper.style.zIndex = '-9999';
-    cloneWrapper.style.background = '#ffffff';
-    cloneWrapper.style.width = '210mm';
-    cloneWrapper.style.minHeight = '297mm';
-    
+    cloneWrapper.style.cssText = [
+        'position: fixed',
+        'top: 0',
+        'left: 0',
+        'width: 794px',       // A4 width at 96dpi
+        'min-height: 1123px', // A4 height at 96dpi
+        'background: #ffffff',
+        'opacity: 0',
+        'pointer-events: none',
+        'z-index: -9999',
+        'overflow: visible'
+    ].join('; ');
+
     const cloneElement = originalElement.cloneNode(true);
-    // Ensure the clone has no display/visibility restrictions
-    cloneElement.style.display = 'block';
-    cloneElement.style.visibility = 'visible';
-    
+    cloneElement.removeAttribute('id'); // avoid duplicate IDs
+    cloneElement.style.cssText = [
+        'display: block',
+        'visibility: visible',
+        'width: 794px',
+        'min-height: 1123px',
+        'background: #ffffff',
+        'padding: 60px',
+        'box-sizing: border-box',
+        'color: #000000',
+        'font-family: Inter, Arial, sans-serif',
+        'font-size: 11pt',
+        'line-height: 1.5'
+    ].join('; ');
+
     cloneWrapper.appendChild(cloneElement);
     document.body.appendChild(cloneWrapper);
 
     const opt = {
-        margin:       0,
-        filename:     'Vishvajit_Surwase_Resume.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, logging: false, windowWidth: 794 }, // 794px is roughly A4 width
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        margin:      0,
+        filename:    'Vishvajit_Surwase_Resume.pdf',
+        image:       { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            width: 794,
+            windowWidth: 794,
+            scrollX: 0,
+            scrollY: 0
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     html2pdf().from(cloneElement).set(opt).save().then(() => {
