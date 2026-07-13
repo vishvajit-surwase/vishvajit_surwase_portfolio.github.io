@@ -889,3 +889,61 @@ footer {
     .floating-assistance.is-downloading .resume-loader {
         display: block;
     }
+
+/* ── Demo Launch Buttons ── */
+.demo-launch-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1.2rem;
+    background: linear-gradient(135deg, rgba(0,240,255,0.15), rgba(0,240,255,0.05));
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+.demo-launch-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent-cyan);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+    z-index: 0;
+}
+.demo-launch-btn:hover::before { transform: scaleX(1); }
+.demo-launch-btn:hover { color: var(--bg-main); box-shadow: 0 0 20px rgba(0,240,255,0.45); }
+.demo-launch-btn svg,
+.demo-launch-btn span { position: relative; z-index: 1; }
+
+.demo-github-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1.2rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+.demo-github-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary);
+    border-color: rgba(255,255,255,0.3);
+}
+
+/* ── Demo Image Hover Overlay ── */
+.project-media:hover .demo-hover-overlay { opacity: 1 !important; }

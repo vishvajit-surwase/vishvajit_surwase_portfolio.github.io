@@ -245,11 +245,14 @@
             <!-- Project 1: Retail Decision Intelligence System -->
             <div class="project-card cyber-card glowing-border flagship">
                 <div class="card-inner">
-                    <div class="project-media">
+                    <div class="project-media" style="cursor:pointer;" onclick="window.open('retail-demo.html','_blank')">
                         <img src="retail_ai.png" alt="Retail AI Dashboard" class="project-gif">
                         <div class="media-overlay">
                             <span class="live-dot"></span>
-                            <span class="live-text">NEW</span>
+                            <span class="live-text">DEMO</span>
+                        </div>
+                        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;background:rgba(0,240,255,0.12);" class="demo-hover-overlay">
+                            <span style="font-family:var(--font-code);font-size:0.9rem;color:#00f0ff;background:rgba(10,17,40,0.85);padding:0.5rem 1.2rem;border-radius:6px;border:1px solid #00f0ff;">▶ Launch Virtual Demo</span>
                         </div>
                     </div>
                     <div class="project-type">FLAGSHIP AI PROJECT</div>
@@ -265,6 +268,16 @@
                         <span>Scikit-learn</span>
                         <span>Groq API</span>
                         <span>Plotly</span>
+                    </div>
+                    <div style="margin-top:1.2rem;display:flex;gap:0.8rem;">
+                        <a href="retail-demo.html" target="_blank" class="demo-launch-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            View Interactive Demo
+                        </a>
+                        <a href="https://github.com/vishvajit-surwase" target="_blank" class="demo-github-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                            GitHub
+                        </a>
                     </div>
                 </div>
             </div>

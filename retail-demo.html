@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail Decision Intelligence System — Live Demo</title>
+    <meta name="description" content="Interactive virtual demo of the Retail Decision Intelligence System by Vishvajit Surwase.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --sidebar: #1a1a2e;
+            --card: #16213e;
+            --card2: #1a1f35;
+            --accent: #00f0ff;
+            --accent2: #ff6b6b;
+            --accent3: #ffd93d;
+            --accent4: #6bcb77;
+            --accent5: #a855f7;
+            --text: #e8eaf0;
+            --text2: #8b8fa8;
+            --border: rgba(0,240,255,0.15);
+            --font: 'Inter', sans-serif;
+            --code: 'Fira Code', monospace;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body { background:var(--bg); color:var(--text); font-family:var(--font); overflow-x:hidden; }
+
+        /* ════════════════════════════════════════════
+           VIDEO WALKTHROUGH SECTION
+        ════════════════════════════════════════════ */
+        .walkthrough-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Cyber grid bg */
+        .wt-grid {
+            position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(rgba(0,240,255,0.04) 1px,transparent 1px),
+                        linear-gradient(90deg,rgba(0,240,255,0.04) 1px,transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* Header bar */
+        .wt-topbar {
+            display: flex; align-items: center; padding: 1rem 2rem;
+            background: rgba(26,26,46,0.9); border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px); position: relative; z-index: 10;
+        }
+        .wt-logo {
+            font-family: var(--code); font-size: 0.9rem; color: var(--accent);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .wt-title { margin-left: 1rem; font-size: 0.85rem; color: var(--text2); }
+        .wt-title span { color: var(--text); font-weight: 600; }
+        .back-btn-top {
+            margin-left: auto; background: rgba(0,240,255,0.08);
+            border: 1px solid var(--border); color: var(--accent);
+            padding: 0.35rem 1rem; border-radius: 5px; font-size: 0.78rem;
+            font-family: var(--code); cursor: pointer; text-decoration: none;
+            transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;
+        }
+        .back-btn-top:hover { background: rgba(0,240,255,0.18); box-shadow: 0 0 12px rgba(0,240,255,0.3); }
+
+        /* Hero text above the "video" */
+        .wt-hero {
+            text-align: center; padding: 3rem 2rem 1.5rem;
+            position: relative; z-index: 5;
+        }
+        .wt-badge {
+            display: inline-block;
+            background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.3);
+            color: var(--accent); font-family: var(--code); font-size: 0.72rem;
+            padding: 0.3rem 1rem; border-radius: 20px; margin-bottom: 1rem;
+            letter-spacing: 2px; text-transform: uppercase;
+        }
+        .wt-hero h1 {
+            font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 0.7rem;
+        }
+        .wt-hero p { color: var(--text2); font-size: 1rem; max-width: 560px; margin: 0 auto 1.5rem; line-height: 1.6; }
+
+        /* ── VIDEO PLAYER FRAME ── */
+        .video-player-wrap {
+            max-width: 960px; margin: 0 auto 1rem;
+            padding: 0 1.5rem; position: relative; z-index: 5; width: 100%;
+        }
+        .video-player-frame {
+            background: #0a0d16;
+            border: 1px solid rgba(0,240,255,0.25);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(0,240,255,0.08), 0 40px 80px rgba(0,0,0,0.7);
+            position: relative;
+        }
+        /* Fake browser chrome */
+        .vp-chrome {
+            background: #141829; padding: 0.6rem 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .vp-dot { width:10px; height:10px; border-radius:50%; }
+        .vp-dot.r{background:#ff5f56;} .vp-dot.y{background:#ffbd2e;} .vp-dot.g{background:#27c93f;}
+        .vp-url {
+            flex:1; margin:0 0.8rem;
+            background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);
+            border-radius:5px; padding:0.2rem 0.7rem; font-size:0.72rem;
+            font-family:var(--code); color:var(--text2); text-align:center;
+        }
+        .vp-tab-strip {
+            background: #0f1222; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display:flex; gap:0; padding:0;
+        }
+        .vp-tab {
+            padding:0.45rem 1.2rem; font-size:0.75rem; font-family:var(--code);
+            color:var(--text2); border-right:1px solid rgba(255,255,255,0.05);
+            cursor:default; transition:all 0.3s;
+        }
+        .vp-tab.active { background:var(--bg); color:var(--accent); border-bottom:2px solid var(--accent); }
+
+        /* ── SCENE CONTAINER ── */
+        .vp-screen {
+            position: relative;
+            min-height: 480px;
+            background: var(--bg);
+            overflow: hidden;
+        }
+        /* Each scene */
+        .scene {
+            position: absolute; inset: 0;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.6s ease;
+            display: flex; flex-direction: column;
+            padding: 2rem;
+        }
+        .scene.active { opacity: 1; pointer-events: auto; }
+
+        /* ── SCENE 1: Upload ── */
+        .s1-upload-zone {
+            border: 2px dashed rgba(0,240,255,0.3); border-radius: 14px;
+            padding: 3rem; text-align: center;
+            background: rgba(0,240,255,0.03);
+            max-width: 520px; margin: 1rem auto;
+            position: relative; overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        .s1-upload-zone.hovering {
+            border-color: var(--accent);
+            background: rgba(0,240,255,0.08);
+            box-shadow: 0 0 30px rgba(0,240,255,0.15);
+        }
+        .s1-upload-zone.dropped {
+            border-color: var(--accent4); border-style: solid;
+            background: rgba(107,203,119,0.06);
+        }
+        .upload-glow {
+            position: absolute; inset: -20px;
+            background: radial-gradient(circle, rgba(0,240,255,0.12) 0%, transparent 70%);
+            opacity: 0; transition: opacity 0.4s;
+        }
+        .s1-upload-zone.hovering .upload-glow { opacity: 1; }
+        .upload-icon-big { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+        .upload-title-big { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.4rem; }
+        .upload-sub { font-size: 0.82rem; color: var(--text2); margin-bottom: 1.5rem; }
+
+        .file-item {
+            display: flex; align-items: center; gap: 0.8rem;
+            background: rgba(107,203,119,0.08); border: 1px solid rgba(107,203,119,0.3);
+            border-radius: 8px; padding: 0.7rem 1rem; margin-top: 0.8rem;
+            opacity: 0; transform: translateY(10px);
+            transition: all 0.4s ease;
+        }
+        .file-item.visible { opacity: 1; transform: translateY(0); }
+        .file-icon { font-size: 1.4rem; }
+        .file-name { font-family: var(--code); font-size: 0.85rem; color: var(--accent4); }
+        .file-size { font-size: 0.72rem; color: var(--text2); font-family: var(--code); margin-top: 0.1rem; }
+
+        /* Fake cursor */
+        .fake-cursor {
+            position: absolute; width: 18px; height: 18px; pointer-events: none;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24'%3E%3Cpath fill='white' stroke='black' stroke-width='1' d='M5.5 3.21V20.8L9.52 16.79L13.06 22.28L15.55 20.94L12 15.45L17.95 14.55Z'/%3E%3C/svg%3E") no-repeat center/contain;
+            z-index: 100;
+            transition: left 0.8s cubic-bezier(.4,0,.2,1), top 0.8s cubic-bezier(.4,0,.2,1);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        /* Process btn */
+        .process-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--accent); color: #0f1117;
+            padding: 0.7rem 2rem; border-radius: 8px; border: none;
+            font-weight: 700; font-size: 0.95rem; cursor: pointer;
+            margin-top: 1rem; opacity: 0; transform: translateY(8px);
+            transition: all 0.4s ease;
+        }
+        .process-btn.visible { opacity: 1; transform: translateY(0); }
+        .process-btn.clicked { background: var(--accent4); transform: scale(0.97); }
+
+        /* ── SCENE 2: ETL Pipeline ── */
+        .pipeline-wrap { max-width: 680px; margin: 0 auto; width: 100%; }
+        .pipeline-title {
+            font-family: var(--code); font-size: 0.85rem; color: var(--accent);
+            margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .etl-step {
+            display: flex; align-items: center; gap: 1rem;
+            background: var(--card); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 0.7rem;
+            opacity: 0; transform: translateX(-20px);
+            transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.3s, background 0.3s;
+        }
+        .etl-step.show { opacity: 1; transform: translateX(0); }
+        .etl-step.running { border-color: rgba(0,240,255,0.5); background: rgba(0,240,255,0.05); }
+        .etl-step.done { border-color: rgba(107,203,119,0.5); background: rgba(107,203,119,0.04); }
+        .etl-icon { font-size: 1.4rem; flex-shrink: 0; width: 36px; text-align: center; }
+        .etl-info { flex: 1; }
+        .etl-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.15rem; }
+        .etl-detail { font-size: 0.75rem; color: var(--text2); font-family: var(--code); }
+        .etl-status { font-size: 0.78rem; font-family: var(--code); min-width: 90px; text-align: right; }
+        .etl-status.pending { color: var(--text2); }
+        .etl-status.running { color: var(--accent); }
+        .etl-status.done { color: var(--accent4); }
+        /* spinner */
+        .spinner {
+            display: inline-block; width: 12px; height: 12px;
+            border: 2px solid rgba(0,240,255,0.3); border-top-color: var(--accent);
+            border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 4px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* progress bar */
+        .etl-progress { height: 3px; background: rgba(255,255,255,0.06); border-radius:2px; margin-top: 0.6rem; overflow: hidden; }
+        .etl-progress-fill { height: 100%; border-radius:2px; width: 0%; transition: width 0.8s ease; }
+
+        /* Log terminal */
+        .log-terminal {
+            background: #0a0c14; border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px; padding: 0.8rem 1rem; margin-top: 1rem;
+            font-family: var(--code); font-size: 0.72rem; color: var(--text2);
+            max-height: 100px; overflow: hidden;
+        }
+        .log-line { margin: 0.12rem 0; }
+        .log-line.ok { color: var(--accent4); }
+        .log-line.info { color: var(--accent); }
+        .log-line.warn { color: var(--accent3); }
+
+        /* ── SCENE 3: Analytics ── */
+        .analytics-grid {
+            display: grid; grid-template-columns: repeat(4,1fr); gap: 0.7rem;
+            margin-bottom: 1rem;
+        }
+        .kpi-mini {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 8px; padding: 0.8rem;
+            opacity: 0; transform: translateY(12px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .kpi-mini.show { opacity: 1; transform: translateY(0); }
+        .kpi-mini-label { font-size: 0.65rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+        .kpi-mini-val { font-size: 1.4rem; font-weight: 700; font-family: var(--code); margin-top: 0.2rem; }
+        .kpi-mini-delta { font-size: 0.68rem; font-family: var(--code); }
+
+        .charts-mini-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 0.7rem; }
+        .chart-mini-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 8px; padding: 0.9rem;
+            opacity: 0; transform: translateY(12px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .chart-mini-card.show { opacity: 1; transform: translateY(0); }
+        .chart-mini-title { font-size: 0.72rem; color: var(--text2); margin-bottom: 0.6rem; font-family: var(--code); }
+        .mini-chart-wrap { height: 140px; position: relative; }
+
+        /* ── SCENE 4: AI Chat ── */
+        .chat-scene-wrap {
+            display: grid; grid-template-columns: 1fr 260px; gap: 1rem;
+            max-width: 800px; margin: 0 auto; width: 100%;
+        }
+        .chat-scene-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; display: flex; flex-direction: column;
+            height: 380px;
+        }
+        .chat-scene-header {
+            padding: 0.8rem 1rem; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; font-weight: 600;
+        }
+        .groq-badge {
+            margin-left: auto; font-size: 0.62rem; font-family: var(--code);
+            background: rgba(168,85,247,0.15); color: var(--accent5);
+            padding: 0.1rem 0.4rem; border-radius: 4px;
+            border: 1px solid rgba(168,85,247,0.3);
+        }
+        .chat-scene-msgs {
+            flex: 1; overflow-y: auto; padding: 0.8rem; display: flex;
+            flex-direction: column; gap: 0.7rem;
+        }
+        .scene-msg { display: flex; gap: 0.5rem; opacity: 0; transform: translateY(8px); transition: all 0.4s ease; }
+        .scene-msg.show { opacity: 1; transform: translateY(0); }
+        .scene-msg.user { flex-direction: row-reverse; }
+        .scene-avatar {
+            width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+        }
+        .scene-avatar.ai { background: rgba(168,85,247,0.2); border: 1px solid rgba(168,85,247,0.3); }
+        .scene-avatar.user-av { background: rgba(0,240,255,0.15); border: 1px solid rgba(0,240,255,0.2); }
+        .scene-bubble {
+            max-width: 82%; padding: 0.55rem 0.8rem;
+            border-radius: 8px; font-size: 0.78rem; line-height: 1.5;
+        }
+        .scene-msg.ai .scene-bubble { background: var(--card2); border: 1px solid var(--border); }
+        .scene-msg.user .scene-bubble { background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.2); }
+        .scene-bubble strong { color: var(--accent); }
+        .chat-scene-input-row {
+            padding: 0.6rem; border-top: 1px solid var(--border);
+            display: flex; gap: 0.5rem; align-items: center;
+        }
+        .scene-input-field {
+            flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            border-radius: 6px; padding: 0.4rem 0.7rem;
+            color: var(--text); font-size: 0.78rem; font-family: var(--code);
+            overflow: hidden; white-space: nowrap;
+        }
+        .scene-send-btn {
+            background: var(--accent); color: #0f1117; border: none;
+            border-radius: 6px; padding: 0.4rem 0.7rem; font-weight: 700; font-size: 0.75rem;
+            cursor: pointer;
+        }
+        /* Typewriter cursor */
+        .tw-cursor { display: inline-block; width: 2px; height: 1em; background: var(--accent); animation: blink 0.8s steps(1) infinite; vertical-align: text-bottom; margin-left: 1px; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+        /* Context panel */
+        .context-mini {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1rem; height: 380px; overflow: hidden;
+        }
+        .context-mini h4 { font-size: 0.75rem; color: var(--accent); font-family: var(--code); margin-bottom: 0.8rem; }
+        .cm-row { display: flex; justify-content: space-between; font-size: 0.72rem; margin-bottom: 0.4rem; }
+        .cm-row .lbl { color: var(--text2); }
+        .cm-row .val { font-family: var(--code); color: var(--text); font-weight: 600; }
+        .cm-divider { height: 1px; background: var(--border); margin: 0.6rem 0; }
+
+        /* Typing indicator */
+        .typing-row { display: flex; gap: 4px; padding: 0.3rem 0; }
+        .td { width: 6px; height: 6px; border-radius: 50%; background: var(--text2); animation: ta 1.2s infinite; }
+        .td:nth-child(2){animation-delay:0.2s;} .td:nth-child(3){animation-delay:0.4s;}
+        @keyframes ta { 0%,60%,100%{transform:translateY(0);opacity:0.3} 30%{transform:translateY(-5px);opacity:1} }
+
+        /* ── PLAYBACK CONTROLS ── */
+        .vp-controls {
+            background: #0d1120; border-top: 1px solid rgba(255,255,255,0.06);
+            padding: 0.7rem 1rem; display: flex; align-items: center; gap: 0.8rem;
+        }
+        .vp-btn {
+            background: none; border: none; cursor: pointer; color: var(--text2);
+            font-size: 1rem; padding: 0.2rem; transition: color 0.2s; display: flex; align-items: center;
+        }
+        .vp-btn:hover { color: var(--accent); }
+        .vp-progress-wrap {
+            flex: 1; height: 4px; background: rgba(255,255,255,0.1);
+            border-radius: 2px; cursor: pointer; position: relative;
+        }
+        .vp-progress-fill {
+            height: 100%; border-radius: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent5));
+            transition: width 0.5s linear;
+        }
+        .vp-progress-dot {
+            position: absolute; right: -5px; top: 50%; transform: translateY(-50%);
+            width: 10px; height: 10px; background: var(--accent);
+            border-radius: 50%; box-shadow: 0 0 6px var(--accent);
+        }
+        .vp-time { font-family: var(--code); font-size: 0.72rem; color: var(--text2); }
+        .vp-scene-label {
+            font-family: var(--code); font-size: 0.72rem; color: var(--accent);
+            background: rgba(0,240,255,0.08); padding: 0.2rem 0.6rem; border-radius: 4px;
+        }
+
+        /* Step dots */
+        .step-dots {
+            display: flex; justify-content: center; gap: 0.5rem;
+            padding: 1rem 0 0.5rem; position: relative; z-index: 5;
+        }
+        .step-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            transition: all 0.3s ease; cursor: pointer;
+        }
+        .step-dot.active { background: var(--accent); box-shadow: 0 0 8px var(--accent); width: 24px; border-radius: 4px; }
+
+        /* Jump to demo btn */
+        .jump-demo-wrap {
+            text-align: center; padding: 1.5rem 2rem 2.5rem;
+            position: relative; z-index: 5;
+        }
+        .jump-demo-btn {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent5));
+            color: #0f1117; padding: 0.9rem 2.5rem; border-radius: 8px;
+            font-weight: 700; font-size: 1rem; text-decoration: none;
+            transition: all 0.3s ease; letter-spacing: 0.5px;
+            box-shadow: 0 0 30px rgba(0,240,255,0.25);
+        }
+        .jump-demo-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(0,240,255,0.45);
+        }
+        .jump-demo-sub {
+            display: block; font-size: 0.75rem; color: var(--text2);
+            margin-top: 0.8rem; font-family: var(--code);
+        }
+
+        /* ════════════════════════════════════════════
+           INTERACTIVE DEMO SHELL (below the fold)
+        ════════════════════════════════════════════ */
+        #interactive-demo {
+            border-top: 2px solid var(--border);
+            scroll-margin-top: 0;
+        }
+
+        .app-shell {
+            display: grid;
+            grid-template-rows: 52px 1fr;
+            grid-template-columns: 230px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── Top Bar ── */
+        .topbar {
+            grid-column: 1 / -1;
+            background: var(--sidebar);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center;
+            padding: 0 1.5rem; gap: 1rem;
+            position: relative; z-index: 100;
+        }
+        .topbar-logo {
+            display: flex; align-items:center; gap:0.6rem;
+            font-family: var(--code); font-size:0.85rem; color:var(--accent); font-weight:500;
+        }
+        .topbar-logo svg { width:22px; height:22px; }
+        .topbar-title { font-size:0.9rem; color:var(--text2); margin-left:0.5rem; }
+        .topbar-title span { color:var(--text); font-weight:600; }
+        .topbar-status {
+            margin-left: auto; display: flex; align-items:center; gap:0.4rem;
+            font-size:0.75rem; color:var(--accent4); font-family:var(--code);
+        }
+        .status-dot { width:7px; height:7px; border-radius:50%; background:var(--accent4); animation:pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+        .back-btn {
+            background: rgba(0,240,255,0.08); border: 1px solid var(--border);
+            color: var(--accent); padding: 0.3rem 0.9rem; border-radius: 5px;
+            font-size: 0.78rem; font-family: var(--code); cursor: pointer;
+            text-decoration: none; transition: all 0.2s;
+            display: flex; align-items:center; gap:0.4rem; margin-left: 0.5rem;
+        }
+        .back-btn:hover { background:rgba(0,240,255,0.18); box-shadow:0 0 12px rgba(0,240,255,0.25); }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            background: var(--sidebar); border-right: 1px solid var(--border);
+            padding: 1.5rem 0; display: flex; flex-direction:column; gap:0.3rem;
+            overflow-y: auto;
+        }
+        .sidebar-section-label {
+            font-size:0.65rem; letter-spacing:2px; color:var(--text2);
+            padding: 0.8rem 1.2rem 0.3rem; text-transform: uppercase;
+        }
+        .nav-item {
+            display: flex; align-items:center; gap:0.75rem;
+            padding: 0.6rem 1.2rem; cursor: pointer;
+            transition: all 0.15s; font-size:0.88rem; color: var(--text2);
+            border-left: 3px solid transparent; font-weight: 500;
+        }
+        .nav-item:hover { background:rgba(0,240,255,0.06); color:var(--text); }
+        .nav-item.active { background: rgba(0,240,255,0.1); color: var(--accent); border-left-color: var(--accent); }
+        .nav-item svg { width:16px; height:16px; flex-shrink:0; }
+        .nav-badge { margin-left:auto; background: rgba(168,85,247,0.2); color: var(--accent5); font-size:0.65rem; padding:0.1rem 0.4rem; border-radius:8px; font-family:var(--code); }
+        .sidebar-divider { height:1px; background:var(--border); margin:0.6rem 1rem; }
+        .sidebar-metric { padding: 0.4rem 1.2rem; font-size:0.75rem; color:var(--text2); font-family:var(--code); }
+        .sidebar-metric span { color:var(--accent4); font-weight:600; }
+
+        /* ── Main Content ── */
+        .main-content {
+            overflow-y: auto; padding: 1.5rem 2rem;
+            background: var(--bg); position: relative;
+        }
+        .main-content::-webkit-scrollbar { width:6px; }
+        .main-content::-webkit-scrollbar-track { background:transparent; }
+        .main-content::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.08); border-radius:3px; }
+
+        /* ── Page Header ── */
+        .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+        .page-title { font-size:1.4rem; font-weight:700; color:var(--text); }
+        .page-subtitle { font-size:0.8rem; color:var(--text2); margin-top:0.2rem; font-family:var(--code); }
+        .page-actions { display:flex; gap:0.7rem; }
+
+        /* ── Buttons ── */
+        .btn { padding:0.45rem 1rem; border-radius:6px; font-size:0.82rem; font-weight:600; cursor:pointer; border:none; transition:all 0.2s; font-family:var(--font); display:flex; align-items:center; gap:0.4rem; }
+        .btn-primary { background:var(--accent); color:#0f1117; }
+        .btn-primary:hover { box-shadow:0 0 18px rgba(0,240,255,0.5); transform:translateY(-1px); }
+        .btn-secondary { background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); }
+        .btn-secondary:hover { background:rgba(255,255,255,0.1); }
+
+        /* ── KPI Cards ── */
+        .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius:10px; padding: 1.1rem 1.3rem; position:relative; overflow:hidden; transition: transform 0.2s, box-shadow 0.2s; }
+        .kpi-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.4); }
+        .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+        .kpi-card.cyan::before { background:var(--accent); }
+        .kpi-card.red::before { background:var(--accent2); }
+        .kpi-card.yellow::before { background:var(--accent3); }
+        .kpi-card.green::before { background:var(--accent4); }
+        .kpi-label { font-size:0.72rem; color:var(--text2); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem; }
+        .kpi-value { font-size:1.9rem; font-weight:700; font-family:var(--code); }
+        .kpi-delta { font-size:0.75rem; margin-top:0.3rem; font-family:var(--code); }
+        .kpi-delta.up { color:var(--accent4); }
+        .kpi-delta.down { color:var(--accent2); }
+        .kpi-icon { position:absolute; right:1rem; top:50%; transform:translateY(-50%); opacity:0.15; font-size:2.5rem; }
+
+        /* ── Charts ── */
+        .charts-row { display:grid; grid-template-columns:2fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+        .chart-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.2rem; }
+        .chart-title { font-size:0.85rem; font-weight:600; margin-bottom:1rem; color:var(--text); display:flex; align-items:center; gap:0.5rem; }
+        .chart-title .badge { font-size:0.65rem; font-family:var(--code); background:rgba(0,240,255,0.1); color:var(--accent); padding:0.1rem 0.5rem; border-radius:4px; font-weight:400; }
+        .chart-container { position:relative; height:220px; }
+
+        /* ── Tables ── */
+        .table-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.2rem; margin-bottom:1.5rem; overflow-x:auto; }
+        .data-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+        .data-table th { text-align:left; padding:0.6rem 0.8rem; color:var(--text2); border-bottom:1px solid var(--border); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; }
+        .data-table td { padding:0.6rem 0.8rem; border-bottom:1px solid rgba(255,255,255,0.03); font-family:var(--code); font-size:0.8rem; }
+        .data-table tr:last-child td { border-bottom:none; }
+        .data-table tr:hover td { background:rgba(0,240,255,0.03); }
+
+        /* ── Two/Three col ── */
+        .two-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+        .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+
+        /* ── Segment cards ── */
+        .segment-card { background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:1.1rem; text-align:center; }
+        .segment-emoji { font-size:2rem; margin-bottom:0.5rem; }
+        .segment-name { font-size:0.9rem; font-weight:600; margin-bottom:0.2rem; }
+        .segment-count { font-size:0.75rem; color:var(--text2); font-family:var(--code); }
+        .segment-value { font-size:1.2rem; font-weight:700; font-family:var(--code); margin-top:0.4rem; }
+
+        /* ── Chat ── */
+        .chat-wrapper { display:grid; grid-template-columns:1fr 300px; gap:1rem; margin-bottom:1.5rem; }
+        .chat-card { background:var(--card); border:1px solid var(--border); border-radius:10px; display:flex; flex-direction:column; height:480px; }
+        .chat-header { padding:0.9rem 1.2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.6rem; font-size:0.85rem; font-weight:600; }
+        .chat-groq-badge { margin-left:auto; font-size:0.65rem; font-family:var(--code); background:rgba(168,85,247,0.15); color:var(--accent5); padding:0.15rem 0.5rem; border-radius:4px; border:1px solid rgba(168,85,247,0.3); }
+        .chat-messages { flex:1; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:0.8rem; }
+        .chat-messages::-webkit-scrollbar { width:4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+        .msg { display:flex; gap:0.6rem; align-items:flex-start; }
+        .msg.user { flex-direction:row-reverse; }
+        .msg-avatar { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; flex-shrink:0; }
+        .msg-avatar.ai { background:rgba(168,85,247,0.2); border:1px solid rgba(168,85,247,0.3); }
+        .msg-avatar.user-av { background:rgba(0,240,255,0.15); border:1px solid rgba(0,240,255,0.3); }
+        .msg-bubble { max-width:80%; padding:0.7rem 0.9rem; border-radius:10px; font-size:0.82rem; line-height:1.55; }
+        .msg.ai .msg-bubble { background:var(--card2); border:1px solid var(--border); }
+        .msg.user .msg-bubble { background:rgba(0,240,255,0.1); border:1px solid rgba(0,240,255,0.2); }
+        .msg-bubble strong { color:var(--accent); }
+        .typing-indicator { display:flex; gap:4px; padding:0.5rem 0; }
+        .typing-dot { width:7px; height:7px; border-radius:50%; background:var(--text2); animation:typingAnim 1.2s infinite; }
+        .typing-dot:nth-child(2){animation-delay:0.2s;} .typing-dot:nth-child(3){animation-delay:0.4s;}
+        @keyframes typingAnim { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-6px);opacity:1} }
+        .chat-input-row { padding:0.8rem; border-top:1px solid var(--border); display:flex; gap:0.6rem; align-items:center; }
+        .chat-input { flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:7px; padding:0.5rem 0.8rem; color:var(--text); font-size:0.83rem; font-family:var(--font); outline:none; transition:border-color 0.2s; }
+        .chat-input:focus { border-color:var(--accent); }
+        .chat-send-btn { background:var(--accent); color:#0f1117; border:none; border-radius:7px; padding:0.5rem 0.9rem; cursor:pointer; font-weight:700; font-size:0.82rem; transition:all 0.2s; }
+        .chat-send-btn:hover { box-shadow:0 0 14px rgba(0,240,255,0.4); }
+        .context-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.2rem; height:480px; overflow-y:auto; font-size:0.78rem; }
+        .context-card h4 { font-size:0.82rem; color:var(--accent); margin-bottom:0.8rem; font-family:var(--code); }
+        .context-metric { display:flex; justify-content:space-between; margin-bottom:0.5rem; }
+        .context-metric .label { color:var(--text2); }
+        .context-metric .val { color:var(--text); font-family:var(--code); font-weight:600; }
+        .context-divider { height:1px; background:var(--border); margin:0.8rem 0; }
+        .suggestions { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.8rem; }
+        .suggestion-chip { background:rgba(0,240,255,0.06); border:1px solid var(--border); border-radius:14px; padding:0.25rem 0.7rem; font-size:0.72rem; cursor:pointer; color:var(--text2); transition:all 0.2s; font-family:var(--code); }
+        .suggestion-chip:hover { background:rgba(0,240,255,0.15); color:var(--accent); border-color:var(--accent); }
+
+        /* ── Upload zone ── */
+        .upload-zone { border:2px dashed var(--border); border-radius:12px; padding:2.5rem; text-align:center; background:rgba(0,240,255,0.02); margin-bottom:1.5rem; transition:all 0.3s; cursor:pointer; }
+        .upload-zone:hover { border-color:var(--accent); background:rgba(0,240,255,0.05); }
+        .upload-zone.uploaded { border-color:var(--accent4); background:rgba(107,203,119,0.05); border-style:solid; }
+
+        /* ── Pipeline Steps ── */
+        .pipeline-steps { display:flex; gap:0; margin-bottom:1.5rem; background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+        .pipeline-step { flex:1; padding:1rem 0.8rem; text-align:center; position:relative; font-size:0.78rem; border-right:1px solid var(--border); transition:all 0.3s; }
+        .pipeline-step:last-child { border-right:none; }
+        .pipeline-step.done { background:rgba(107,203,119,0.06); }
+        .pipeline-step.active { background:rgba(0,240,255,0.08); }
+        .pipeline-step.pending { opacity:0.45; }
+        .step-icon { font-size:1.2rem; margin-bottom:0.3rem; }
+        .step-name { font-weight:600; color:var(--text); font-size:0.77rem; }
+        .step-status { font-size:0.68rem; font-family:var(--code); margin-top:0.2rem; }
+        .step-status.done { color:var(--accent4); }
+        .step-status.active { color:var(--accent); }
+        .step-status.pending { color:var(--text2); }
+
+        /* ── Forecast ── */
+        .forecast-info { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-bottom:1.5rem; }
+        .info-box { background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:0.9rem; text-align:center; }
+        .info-box-label { font-size:0.7rem; color:var(--text2); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.4rem; }
+        .info-box-val { font-size:1.4rem; font-weight:700; font-family:var(--code); }
+
+        /* ── Association Rules ── */
+        .rule-card { background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:1rem 1.2rem; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.8rem; }
+        .rule-arrow { color:var(--accent); font-size:1.2rem; }
+        .rule-items { font-family:var(--code); font-size:0.82rem; }
+        .rule-items .item { color:var(--accent3); font-weight:600; }
+        .rule-metrics { margin-left:auto; display:flex; gap:0.8rem; font-size:0.72rem; font-family:var(--code); }
+        .metric-pill { background:rgba(0,240,255,0.08); padding:0.15rem 0.5rem; border-radius:4px; }
+        .metric-pill span { color:var(--accent); }
+
+        /* ── Data Quality ── */
+        .dq-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .dq-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.1rem; }
+        .dq-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.8rem; }
+        .dq-card-title { font-size:0.82rem; font-weight:600; }
+        .dq-score { font-size:1.5rem; font-weight:700; font-family:var(--code); }
+        .grade-badge { padding:0.1rem 0.5rem; border-radius:4px; font-size:0.72rem; font-weight:700; }
+        .grade-A { background:rgba(107,203,119,0.15); color:var(--accent4); }
+        .grade-B { background:rgba(0,240,255,0.1); color:var(--accent); }
+        .progress-bar { height:6px; border-radius:3px; background:rgba(255,255,255,0.06); overflow:hidden; margin-top:0.4rem; }
+        .progress-fill { height:100%; border-radius:3px; }
+
+        /* ── Star schema ── */
+        .schema-diagram { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.5rem; margin-bottom:1.5rem; font-size:0.8rem; }
+        .fact-table { background:rgba(0,240,255,0.08); border:2px solid var(--accent); border-radius:8px; padding:1rem; text-align:center; margin:0 auto; width:220px; }
+        .fact-table-title { font-weight:700; font-family:var(--code); color:var(--accent); margin-bottom:0.6rem; }
+        .fact-col { font-size:0.72rem; color:var(--text2); margin:0.2rem 0; font-family:var(--code); }
+        .fact-col.pk { color:var(--accent3); }
+        .fact-col.fk { color:var(--accent5); }
+        .dim-row { display:flex; justify-content:space-between; margin-bottom:0.6rem; }
+        .dim-table { background:rgba(168,85,247,0.08); border:1px solid rgba(168,85,247,0.3); border-radius:6px; padding:0.6rem 0.8rem; min-width:130px; }
+        .dim-title { font-weight:700; font-family:var(--code); color:var(--accent5); font-size:0.75rem; margin-bottom:0.3rem; }
+        .dim-col { font-size:0.68rem; color:var(--text2); font-family:var(--code); }
+
+        /* ── Arch diagram ── */
+        .arch-container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.5rem; margin-bottom:1.5rem; }
+        .arch-layer { border:1px solid var(--border); border-radius:8px; padding:0.8rem 1.2rem; margin-bottom:0.5rem; display:flex; align-items:center; gap:1rem; }
+        .arch-layer-label { font-size:0.7rem; font-family:var(--code); color:var(--text2); text-transform:uppercase; letter-spacing:1px; min-width:80px; }
+        .arch-modules { display:flex; gap:0.5rem; flex-wrap:wrap; }
+        .arch-module { padding:0.25rem 0.7rem; border-radius:5px; font-size:0.75rem; font-family:var(--code); font-weight:500; }
+        .arch-layer.frontend { border-color:rgba(0,240,255,0.3); background:rgba(0,240,255,0.04); }
+        .arch-layer.frontend .arch-module { background:rgba(0,240,255,0.12); color:var(--accent); }
+        .arch-layer.backend { border-color:rgba(168,85,247,0.3); background:rgba(168,85,247,0.04); }
+        .arch-layer.backend .arch-module { background:rgba(168,85,247,0.12); color:var(--accent5); }
+        .arch-layer.ml { border-color:rgba(255,217,61,0.3); background:rgba(255,217,61,0.04); }
+        .arch-layer.ml .arch-module { background:rgba(255,217,61,0.12); color:var(--accent3); }
+        .arch-layer.data { border-color:rgba(107,203,119,0.3); background:rgba(107,203,119,0.04); }
+        .arch-layer.data .arch-module { background:rgba(107,203,119,0.12); color:var(--accent4); }
+        .arch-arrow { text-align:center; color:var(--text2); font-size:0.8rem; margin:0.1rem 0; }
+
+        /* Page routing */
+        .page { display:none; }
+        .page.active { display:block; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .kpi-grid { grid-template-columns:repeat(2,1fr); }
+            .charts-row,.two-col,.three-col,.dq-grid,.forecast-info { grid-template-columns:1fr; }
+            .chat-wrapper { grid-template-columns:1fr; }
+            .analytics-grid { grid-template-columns:repeat(2,1fr); }
+            .charts-mini-row { grid-template-columns:1fr; }
+            .chat-scene-wrap { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     WALKTHROUGH "VIDEO" SECTION
+═══════════════════════════════════════════════════ -->
+<section class="walkthrough-section">
+    <div class="wt-grid"></div>
+
+    <!-- Top Bar -->
+    <header class="wt-topbar">
+        <div class="wt-logo">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            RetailDI.sys
+        </div>
+        <span class="wt-title">Project Walkthrough — <span>Retail Decision Intelligence System</span></span>
+        <a href="index.html" class="back-btn-top">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Back to Portfolio
+        </a>
+    </header>
+
+    <!-- Hero -->
+    <div class="wt-hero">
+        <div class="wt-badge">⚡ Live Project Walkthrough</div>
+        <h1>Retail Decision Intelligence System</h1>
+        <p>Watch how raw CSV data transforms into actionable business intelligence — from upload to AI-powered insights.</p>
+    </div>
+
+    <!-- Video Player -->
+    <div class="video-player-wrap">
+        <div class="video-player-frame">
+            <!-- Browser Chrome -->
+            <div class="vp-chrome">
+                <span class="vp-dot r"></span>
+                <span class="vp-dot y"></span>
+                <span class="vp-dot g"></span>
+                <div class="vp-url" id="vpUrl">localhost:8501 — Retail Decision Intelligence System</div>
+            </div>
+            <!-- Tab Strip -->
+            <div class="vp-tab-strip">
+                <div class="vp-tab active" id="tabAnalytics">📊 Analytics</div>
+                <div class="vp-tab" id="tabForecast">📈 Forecast</div>
+                <div class="vp-tab" id="tabChat">🤖 AI Chat</div>
+            </div>
+
+            <!-- Fake cursor -->
+            <div class="fake-cursor" id="fakeCursor" style="left:0;top:0;display:none;"></div>
+
+            <!-- ── Screen ── -->
+            <div class="vp-screen">
+
+                <!-- SCENE 1: CSV Upload -->
+                <div class="scene active" id="scene1">
+                    <div style="text-align:center; margin-bottom:1rem;">
+                        <span style="font-family:var(--code);font-size:0.75rem;color:var(--text2);">Step 1 of 4 — Upload your retail data CSV</span>
+                    </div>
+                    <div class="s1-upload-zone" id="uploadZone">
+                        <div class="upload-glow"></div>
+                        <span class="upload-icon-big" id="uploadIcon">📂</span>
+                        <div class="upload-title-big" id="uploadTitle">Drop your CSV file here</div>
+                        <div class="upload-sub" id="uploadSub">Supports: transactions.csv, orders.csv, sales_data.csv · Max 500MB</div>
+                        <div class="file-item" id="fileItem">
+                            <span class="file-icon">📄</span>
+                            <div>
+                                <div class="file-name">retail_transactions.csv</div>
+                                <div class="file-size">4.2 MB · 52,847 rows · 12 columns</div>
+                            </div>
+                            <span style="margin-left:auto;color:var(--accent4);font-size:1.2rem;">✓</span>
+                        </div>
+                        <button class="process-btn" id="processBtn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            Process Data
+                        </button>
+                    </div>
+                    <!-- Column detection preview -->
+                    <div style="max-width:520px;margin:0 auto;opacity:0;transition:opacity 0.5s;" id="colDetect">
+                        <div style="font-family:var(--code);font-size:0.72rem;color:var(--accent);margin-bottom:0.5rem;">🔍 Auto-detecting column formats...</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+                            <span style="background:rgba(0,240,255,0.08);border:1px solid var(--border);border-radius:4px;padding:0.15rem 0.5rem;font-family:var(--code);font-size:0.7rem;color:var(--accent4);">transaction_date → date ✓</span>
+                            <span style="background:rgba(0,240,255,0.08);border:1px solid var(--border);border-radius:4px;padding:0.15rem 0.5rem;font-family:var(--code);font-size:0.7rem;color:var(--accent4);">product_name → product ✓</span>
+                            <span style="background:rgba(0,240,255,0.08);border:1px solid var(--border);border-radius:4px;padding:0.15rem 0.5rem;font-family:var(--code);font-size:0.7rem;color:var(--accent4);">units_sold → quantity ✓</span>
+                            <span style="background:rgba(0,240,255,0.08);border:1px solid var(--border);border-radius:4px;padding:0.15rem 0.5rem;font-family:var(--code);font-size:0.7rem;color:var(--accent4);">unit_price → price ✓</span>
+                            <span style="background:rgba(0,240,255,0.08);border:1px solid var(--border);border-radius:4px;padding:0.15rem 0.5rem;font-family:var(--code);font-size:0.7rem;color:var(--accent4);">customer_id → id ✓</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCENE 2: ETL Pipeline -->
+                <div class="scene" id="scene2">
+                    <div style="text-align:center; margin-bottom:1.2rem;">
+                        <span style="font-family:var(--code);font-size:0.75rem;color:var(--text2);">Step 2 of 4 — ETL Pipeline Processing</span>
+                    </div>
+                    <div class="pipeline-wrap">
+                        <div class="pipeline-title">
+                            <span id="pipelineStatusIcon">⚙️</span>
+                            <span id="pipelineStatusText">Processing retail_transactions.csv...</span>
+                        </div>
+
+                        <div class="etl-step" id="etl0">
+                            <div class="etl-icon">📥</div>
+                            <div class="etl-info">
+                                <div class="etl-name">Data Ingestion</div>
+                                <div class="etl-detail">Loading CSV · Parsing 52,847 rows</div>
+                            </div>
+                            <div class="etl-status pending" id="etls0">Waiting...</div>
+                        </div>
+                        <div class="etl-step" id="etl1">
+                            <div class="etl-icon">🔍</div>
+                            <div class="etl-info">
+                                <div class="etl-name">Auto Column Detection</div>
+                                <div class="etl-detail">Mapping 12 columns → schema</div>
+                            </div>
+                            <div class="etl-status pending" id="etls1">Waiting...</div>
+                        </div>
+                        <div class="etl-step" id="etl2">
+                            <div class="etl-icon">🧹</div>
+                            <div class="etl-info">
+                                <div class="etl-name">Data Cleaning & EDA</div>
+                                <div class="etl-detail">Handling nulls · Removing duplicates</div>
+                            </div>
+                            <div class="etl-status pending" id="etls2">Waiting...</div>
+                        </div>
+                        <div class="etl-step" id="etl3">
+                            <div class="etl-icon">✔️</div>
+                            <div class="etl-info">
+                                <div class="etl-name">Data Quality Validation</div>
+                                <div class="etl-detail">Completeness · Uniqueness · Range checks</div>
+                            </div>
+                            <div class="etl-status pending" id="etls3">Waiting...</div>
+                        </div>
+                        <div class="etl-step" id="etl4">
+                            <div class="etl-icon">🧠</div>
+                            <div class="etl-info">
+                                <div class="etl-name">ML Model Training</div>
+                                <div class="etl-detail">LSTM · K-Means · Apriori (local inference)</div>
+                            </div>
+                            <div class="etl-status pending" id="etls4">Waiting...</div>
+                        </div>
+                        <div class="etl-step" id="etl5">
+                            <div class="etl-icon">⭐</div>
+                            <div class="etl-info">
+                                <div class="etl-name">Star Schema Generation</div>
+                                <div class="etl-detail">Fact + Dimension tables · Metrics layer</div>
+                            </div>
+                            <div class="etl-status pending" id="etls5">Waiting...</div>
+                        </div>
+
+                        <!-- Log Terminal -->
+                        <div class="log-terminal">
+                            <div id="logLines">
+                                <div class="log-line info">▶ [FastAPI] POST /upload — 200 OK</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCENE 3: Analytics Dashboard -->
+                <div class="scene" id="scene3">
+                    <div style="text-align:center; margin-bottom:1rem;">
+                        <span style="font-family:var(--code);font-size:0.75rem;color:var(--text2);">Step 3 of 4 — Analytics Dashboard Ready</span>
+                    </div>
+                    <!-- KPIs -->
+                    <div class="analytics-grid">
+                        <div class="kpi-mini" id="kpi0" style="border-top:2px solid var(--accent);">
+                            <div class="kpi-mini-label">Total Revenue</div>
+                            <div class="kpi-mini-val" style="color:var(--accent);">$2.41M</div>
+                            <div class="kpi-mini-delta" style="color:var(--accent4);">↑ 18.3%</div>
+                        </div>
+                        <div class="kpi-mini" id="kpi1" style="border-top:2px solid var(--accent4);">
+                            <div class="kpi-mini-label">Transactions</div>
+                            <div class="kpi-mini-val" style="color:var(--accent4);">52,847</div>
+                            <div class="kpi-mini-delta" style="color:var(--accent4);">↑ 12.1%</div>
+                        </div>
+                        <div class="kpi-mini" id="kpi2" style="border-top:2px solid var(--accent3);">
+                            <div class="kpi-mini-label">Avg Order Value</div>
+                            <div class="kpi-mini-val" style="color:var(--accent3);">$45.62</div>
+                            <div class="kpi-mini-delta" style="color:var(--accent4);">↑ 5.4%</div>
+                        </div>
+                        <div class="kpi-mini" id="kpi3" style="border-top:2px solid var(--accent2);">
+                            <div class="kpi-mini-label">Unique Customers</div>
+                            <div class="kpi-mini-val" style="color:var(--accent2);">8,934</div>
+                            <div class="kpi-mini-delta" style="color:var(--accent2);">↓ 2.1%</div>
+                        </div>
+                    </div>
+                    <!-- Mini charts -->
+                    <div class="charts-mini-row">
+                        <div class="chart-mini-card" id="miniChart0">
+                            <div class="chart-mini-title">📈 Monthly Revenue Trend — Auto-generated from CSV</div>
+                            <div class="mini-chart-wrap"><canvas id="miniRevenueChart"></canvas></div>
+                        </div>
+                        <div class="chart-mini-card" id="miniChart1">
+                            <div class="chart-mini-title">🏆 Top Categories</div>
+                            <div class="mini-chart-wrap"><canvas id="miniCatChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SCENE 4: AI Chat -->
+                <div class="scene" id="scene4">
+                    <div style="text-align:center; margin-bottom:1rem;">
+                        <span style="font-family:var(--code);font-size:0.75rem;color:var(--text2);">Step 4 of 4 — AI Business Analyst (Groq API)</span>
+                    </div>
+                    <div class="chat-scene-wrap">
+                        <div class="chat-scene-card">
+                            <div class="chat-scene-header">
+                                💬 AI Business Analyst
+                                <span class="groq-badge">⚡ llama-3.1-70b · Groq</span>
+                            </div>
+                            <div class="chat-scene-msgs" id="sceneMsgs">
+                                <div class="scene-msg ai show">
+                                    <div class="scene-avatar ai">🤖</div>
+                                    <div class="scene-bubble">Hello! I have full context of your <strong>52,847 transactions</strong>. What would you like to know?</div>
+                                </div>
+                            </div>
+                            <div class="chat-scene-input-row">
+                                <div class="scene-input-field" id="sceneInputField"><span class="tw-cursor"></span></div>
+                                <button class="scene-send-btn" id="sceneSendBtn">Send</button>
+                            </div>
+                        </div>
+                        <div class="context-mini">
+                            <h4>📊 Live Data Context</h4>
+                            <div class="cm-row"><span class="lbl">Revenue</span><span class="val">$2.41M</span></div>
+                            <div class="cm-row"><span class="lbl">Transactions</span><span class="val">52,847</span></div>
+                            <div class="cm-row"><span class="lbl">Customers</span><span class="val">8,934</span></div>
+                            <div class="cm-divider"></div>
+                            <h4>🧠 ML Ready</h4>
+                            <div class="cm-row"><span class="lbl">LSTM MAE</span><span class="val" style="color:var(--accent4)">94.2%</span></div>
+                            <div class="cm-row"><span class="lbl">Clusters</span><span class="val">4</span></div>
+                            <div class="cm-row"><span class="lbl">Rules</span><span class="val">247</span></div>
+                            <div class="cm-divider"></div>
+                            <h4>⚙️ API</h4>
+                            <div class="cm-row"><span class="lbl">Latency</span><span class="val" style="color:var(--accent4)">~127ms</span></div>
+                            <div class="cm-row"><span class="lbl">Privacy</span><span class="val" style="color:var(--accent4)">✓ Local</span></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /vp-screen -->
+
+            <!-- Controls -->
+            <div class="vp-controls">
+                <button class="vp-btn" id="playPauseBtn" onclick="togglePlay()" title="Play / Pause">
+                    <svg id="playIcon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                </button>
+                <button class="vp-btn" onclick="restartWalkthrough()" title="Restart">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.65"/></svg>
+                </button>
+                <div class="vp-progress-wrap" id="vpProgressWrap" onclick="seekWalkthrough(event)">
+                    <div class="vp-progress-fill" id="vpProgressFill" style="width:0%">
+                        <div class="vp-progress-dot"></div>
+                    </div>
+                </div>
+                <span class="vp-time" id="vpTime">0:00 / 0:28</span>
+                <span class="vp-scene-label" id="vpSceneLabel">📂 Uploading CSV</span>
+            </div>
+        </div><!-- /video-player-frame -->
+    </div><!-- /video-player-wrap -->
+
+    <!-- Step dots -->
+    <div class="step-dots">
+        <div class="step-dot active" id="dot0" onclick="jumpToScene(0)"></div>
+        <div class="step-dot" id="dot1" onclick="jumpToScene(1)"></div>
+        <div class="step-dot" id="dot2" onclick="jumpToScene(2)"></div>
+        <div class="step-dot" id="dot3" onclick="jumpToScene(3)"></div>
+    </div>
+
+    <!-- Jump to interactive demo -->
+    <div class="jump-demo-wrap">
+        <a href="#interactive-demo" class="jump-demo-btn">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Explore Interactive Demo
+        </a>
+        <span class="jump-demo-sub">↓ Fully interactive app with live charts, AI chat & more below</span>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     INTERACTIVE APP SHELL
+═══════════════════════════════════════════════════ -->
+<div id="interactive-demo">
+<div class="app-shell">
+    <header class="topbar">
+        <div class="topbar-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            RetailDI.sys
+        </div>
+        <span class="topbar-title">Interactive Demo — <span>Retail Decision Intelligence System</span></span>
+        <div class="topbar-status">
+            <span class="status-dot"></span> SYSTEM ONLINE · v2.1.0 · FastAPI + Streamlit
+        </div>
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="back-btn">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="19 12 12 4 5 12"/></svg>
+            Watch Walkthrough
+        </a>
+        <a href="index.html" class="back-btn">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Portfolio
+        </a>
+    </header>
+
+    <nav class="sidebar">
+        <div class="sidebar-section-label">Navigation</div>
+        <div class="nav-item active" onclick="showPage('overview',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Overview
+        </div>
+        <div class="nav-item" onclick="showPage('pipeline',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            Data Pipeline
+        </div>
+        <div class="nav-item" onclick="showPage('analytics',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Analytics
+            <span class="nav-badge">LIVE</span>
+        </div>
+        <div class="nav-item" onclick="showPage('forecast',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            LSTM Forecast
+        </div>
+        <div class="nav-item" onclick="showPage('segments',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Customer Segments
+        </div>
+        <div class="nav-item" onclick="showPage('basket',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Market Basket
+        </div>
+        <div class="nav-item" onclick="showPage('quality',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Data Quality
+        </div>
+        <div class="nav-item" onclick="showPage('schema',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            Star Schema
+        </div>
+        <div class="nav-item" onclick="showPage('chat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            AI Chat (Groq)
+        </div>
+        <div class="nav-item" onclick="showPage('arch',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/></svg>
+            Architecture
+        </div>
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section-label">Live Metrics</div>
+        <div class="sidebar-metric">Records: <span>52,847</span></div>
+        <div class="sidebar-metric">API Latency: <span>127ms</span></div>
+        <div class="sidebar-metric">Data Grade: <span>A</span></div>
+        <div class="sidebar-metric">Model: <span>LSTM v3</span></div>
+    </nav>
+
+    <main class="main-content">
+
+        <!-- OVERVIEW -->
+        <div class="page active" id="page-overview">
+            <div class="page-header">
+                <div><div class="page-title">📊 System Overview</div><div class="page-subtitle">retail_transactions.csv · 52,847 rows · Last processed 2 min ago</div></div>
+                <div class="page-actions"><button class="btn btn-secondary">⟳ Refresh</button><button class="btn btn-primary">⬆ Upload New CSV</button></div>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-card cyan"><div class="kpi-label">Total Revenue</div><div class="kpi-value" style="color:var(--accent)">$2.41M</div><div class="kpi-delta up">↑ 18.3% vs prev period</div><div class="kpi-icon">💰</div></div>
+                <div class="kpi-card green"><div class="kpi-label">Total Transactions</div><div class="kpi-value" style="color:var(--accent4)">52,847</div><div class="kpi-delta up">↑ 12.1% MoM</div><div class="kpi-icon">🧾</div></div>
+                <div class="kpi-card yellow"><div class="kpi-label">Avg Order Value</div><div class="kpi-value" style="color:var(--accent3)">$45.62</div><div class="kpi-delta up">↑ 5.4%</div><div class="kpi-icon">📦</div></div>
+                <div class="kpi-card red"><div class="kpi-label">Unique Customers</div><div class="kpi-value" style="color:var(--accent2)">8,934</div><div class="kpi-delta down">↓ 2.1%</div><div class="kpi-icon">👤</div></div>
+            </div>
+            <div class="charts-row">
+                <div class="chart-card"><div class="chart-title">📈 Monthly Revenue Trend <span class="badge">2024</span></div><div class="chart-container"><canvas id="revenueChart"></canvas></div></div>
+                <div class="chart-card"><div class="chart-title">🏆 Top Product Categories</div><div class="chart-container"><canvas id="categoryChart"></canvas></div></div>
+            </div>
+            <div class="table-card">
+                <div class="chart-title" style="margin-bottom:1rem">🛒 Top 5 Best-Selling Products</div>
+                <table class="data-table">
+                    <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Units Sold</th><th>Revenue</th><th>Growth</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>Wireless Headphones Pro</td><td>Electronics</td><td>4,821</td><td>$482,100</td><td style="color:var(--accent4)">↑ 32%</td></tr>
+                        <tr><td>2</td><td>Ergonomic Office Chair</td><td>Furniture</td><td>3,102</td><td>$310,200</td><td style="color:var(--accent4)">↑ 18%</td></tr>
+                        <tr><td>3</td><td>Smart Coffee Maker</td><td>Appliances</td><td>2,987</td><td>$224,025</td><td style="color:var(--accent4)">↑ 24%</td></tr>
+                        <tr><td>4</td><td>Running Shoes Ultra</td><td>Sports</td><td>2,541</td><td>$177,870</td><td style="color:var(--accent3)">→ 3%</td></tr>
+                        <tr><td>5</td><td>Yoga Mat Premium</td><td>Wellness</td><td>2,234</td><td>$89,360</td><td style="color:var(--accent2)">↓ 5%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PIPELINE -->
+        <div class="page" id="page-pipeline">
+            <div class="page-header">
+                <div><div class="page-title">⚙️ ETL Data Pipeline</div><div class="page-subtitle">Smart column auto-detection · Data cleaning · Validation</div></div>
+                <button class="btn btn-primary" onclick="simulatePipeline()">▶ Run Pipeline</button>
+            </div>
+            <div class="upload-zone uploaded">
+                <div style="font-size:2rem;margin-bottom:0.5rem;">✅</div>
+                <div style="font-size:1rem;font-weight:600;margin-bottom:0.3rem;">retail_transactions.csv — Uploaded</div>
+                <div style="font-size:0.8rem;color:var(--text2);">52,847 rows · 12 columns · 4.2 MB · Auto-detection complete</div>
+            </div>
+            <div class="pipeline-steps">
+                <div class="pipeline-step done" id="ps0"><div class="step-icon">📥</div><div class="step-name">Ingest</div><div class="step-status done">✓ Complete</div></div>
+                <div class="pipeline-step done" id="ps1"><div class="step-icon">🔍</div><div class="step-name">Auto-Detect</div><div class="step-status done">✓ Complete</div></div>
+                <div class="pipeline-step done" id="ps2"><div class="step-icon">🧹</div><div class="step-name">Clean</div><div class="step-status done">✓ Complete</div></div>
+                <div class="pipeline-step done" id="ps3"><div class="step-icon">✔️</div><div class="step-name">Validate</div><div class="step-status done">✓ Complete</div></div>
+                <div class="pipeline-step done" id="ps4"><div class="step-icon">⚡</div><div class="step-name">Transform</div><div class="step-status done">✓ Complete</div></div>
+                <div class="pipeline-step done" id="ps5"><div class="step-icon">🗄️</div><div class="step-name">Load</div><div class="step-status done">✓ Complete</div></div>
+            </div>
+            <div class="two-col">
+                <div class="dq-card" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.1rem;">
+                    <div class="chart-title" style="margin-bottom:1rem;">🧹 Data Cleaning Report</div>
+                    <div style="font-size:0.82rem;line-height:2;font-family:var(--code);color:var(--text2);">
+                        <div>Missing values fixed: <strong style="color:var(--accent4)">1,243</strong> rows</div>
+                        <div>Duplicates removed: <strong style="color:var(--accent4)">87</strong> rows</div>
+                        <div>Price outliers capped: <strong style="color:var(--accent3)">34</strong> values</div>
+                        <div>Type coercions: <strong style="color:var(--accent4)">6</strong> columns</div>
+                        <div>Final clean rows: <strong style="color:var(--accent)">51,604</strong></div>
+                    </div>
+                </div>
+                <div class="dq-card" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.1rem;">
+                    <div class="chart-title" style="margin-bottom:1rem;">📊 EDA Summary</div>
+                    <div style="font-size:0.82rem;line-height:2;font-family:var(--code);color:var(--text2);">
+                        <div>Date range: <strong style="color:var(--accent)">Jan–Dec 2024</strong></div>
+                        <div>Unique products: <strong style="color:var(--accent)">347</strong></div>
+                        <div>Unique categories: <strong style="color:var(--accent)">12</strong></div>
+                        <div>Revenue range: <strong style="color:var(--accent)">$5 – $2,450</strong></div>
+                        <div>Peak month: <strong style="color:var(--accent3)">December</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div class="page" id="page-analytics">
+            <div class="page-header">
+                <div><div class="page-title">📈 Sales Analytics Dashboard</div><div class="page-subtitle">Real-time metrics · Trend analysis · Revenue breakdown</div></div>
+                <div class="page-actions"><button class="btn btn-secondary">30D</button><button class="btn btn-secondary">90D</button><button class="btn btn-primary">1Y</button></div>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-card cyan"><div class="kpi-label">Weekly Revenue</div><div class="kpi-value" style="color:var(--accent)">$46.3K</div><div class="kpi-delta up">↑ 9.2%</div></div>
+                <div class="kpi-card green"><div class="kpi-label">Conversion Rate</div><div class="kpi-value" style="color:var(--accent4)">68.4%</div><div class="kpi-delta up">↑ 3.1%</div></div>
+                <div class="kpi-card yellow"><div class="kpi-label">Repeat Purchase</div><div class="kpi-value" style="color:var(--accent3)">42.7%</div><div class="kpi-delta up">↑ 6.8%</div></div>
+                <div class="kpi-card red"><div class="kpi-label">Churn Risk</div><div class="kpi-value" style="color:var(--accent2)">14.2%</div><div class="kpi-delta down">↑ 1.8%</div></div>
+            </div>
+            <div class="charts-row">
+                <div class="chart-card"><div class="chart-title">📅 Daily Sales Volume <span class="badge">Last 30 Days</span></div><div class="chart-container"><canvas id="dailySalesChart"></canvas></div></div>
+                <div class="chart-card"><div class="chart-title">🗂️ Revenue by Category</div><div class="chart-container"><canvas id="revCatChart"></canvas></div></div>
+            </div>
+        </div>
+
+        <!-- FORECAST -->
+        <div class="page" id="page-forecast">
+            <div class="page-header">
+                <div><div class="page-title">🧠 LSTM Demand Forecasting</div><div class="page-subtitle">PyTorch LSTM · 30-day ahead prediction · Local inference</div></div>
+                <button class="btn btn-primary">⟳ Re-train Model</button>
+            </div>
+            <div class="forecast-info">
+                <div class="info-box"><div class="info-box-label">Model Accuracy</div><div class="info-box-val" style="color:var(--accent4)">94.2%</div></div>
+                <div class="info-box"><div class="info-box-label">Epochs Trained</div><div class="info-box-val" style="color:var(--accent)">120</div></div>
+                <div class="info-box"><div class="info-box-label">Forecast Horizon</div><div class="info-box-val" style="color:var(--accent3)">30 Days</div></div>
+            </div>
+            <div class="chart-card" style="margin-bottom:1.5rem;"><div class="chart-title">📉 Actual vs Predicted Demand <span class="badge">LSTM v3</span></div><div class="chart-container" style="height:280px;"><canvas id="forecastChart"></canvas></div></div>
+            <div class="table-card">
+                <div class="chart-title" style="margin-bottom:1rem;">📦 30-Day Stock Recommendations</div>
+                <table class="data-table">
+                    <thead><tr><th>Product</th><th>Forecast Units</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td>Wireless Headphones Pro</td><td>1,240</td><td style="color:var(--accent2)">🔴 Restock Now</td></tr>
+                        <tr><td>Smart Coffee Maker</td><td>890</td><td style="color:var(--accent3)">🟡 Monitor</td></tr>
+                        <tr><td>Ergonomic Chair</td><td>720</td><td style="color:var(--accent4)">🟢 Sufficient</td></tr>
+                        <tr><td>Running Shoes Ultra</td><td>650</td><td style="color:var(--accent4)">🟢 Sufficient</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SEGMENTS -->
+        <div class="page" id="page-segments">
+            <div class="page-header"><div><div class="page-title">👥 Customer Segmentation</div><div class="page-subtitle">K-Means Clustering · 4 segments · RFM Analysis</div></div></div>
+            <div class="three-col">
+                <div class="segment-card"><div class="segment-emoji">💎</div><div class="segment-name" style="color:var(--accent)">Champions</div><div class="segment-count">2,134 customers</div><div class="segment-value" style="color:var(--accent)">$487 avg LTV</div></div>
+                <div class="segment-card"><div class="segment-emoji">⚡</div><div class="segment-name" style="color:var(--accent3)">Loyalists</div><div class="segment-count">3,287 customers</div><div class="segment-value" style="color:var(--accent3)">$234 avg LTV</div></div>
+                <div class="segment-card"><div class="segment-emoji">🌱</div><div class="segment-name" style="color:var(--accent4)">New Customers</div><div class="segment-count">2,089 customers</div><div class="segment-value" style="color:var(--accent4)">$78 avg LTV</div></div>
+            </div>
+            <div class="segment-card" style="text-align:left;display:flex;align-items:center;gap:2rem;margin-bottom:1.5rem;">
+                <div><div class="segment-emoji">⚠️</div><div class="segment-name" style="color:var(--accent2)">At-Risk</div><div class="segment-count">1,424 customers</div><div class="segment-value" style="color:var(--accent2)">$312 avg LTV</div></div>
+                <div><div style="font-size:0.78rem;color:var(--text2);margin-bottom:0.5rem;">Recommended Actions:</div><div style="display:flex;gap:0.5rem;flex-wrap:wrap;"><span class="suggestion-chip">Win-back email</span><span class="suggestion-chip">15% discount</span><span class="suggestion-chip">Personalized recs</span></div></div>
+            </div>
+            <div class="chart-card"><div class="chart-title">🔵 RFM Cluster Scatter</div><div class="chart-container"><canvas id="clusterChart"></canvas></div></div>
+        </div>
+
+        <!-- BASKET -->
+        <div class="page" id="page-basket">
+            <div class="page-header"><div><div class="page-title">🛒 Market Basket Analysis</div><div class="page-subtitle">Apriori Algorithm · Min Support: 0.02 · Min Confidence: 0.35</div></div></div>
+            <div class="forecast-info">
+                <div class="info-box"><div class="info-box-label">Total Rules</div><div class="info-box-val" style="color:var(--accent)">247</div></div>
+                <div class="info-box"><div class="info-box-label">Strong Rules (lift>2)</div><div class="info-box-val" style="color:var(--accent4)">38</div></div>
+                <div class="info-box"><div class="info-box-label">Avg Lift Score</div><div class="info-box-val" style="color:var(--accent3)">2.71x</div></div>
+            </div>
+            <div class="rule-card"><div class="rule-items"><span class="item">Wireless Headphones</span></div><div class="rule-arrow">→</div><div class="rule-items"><span class="item">Bluetooth Speaker</span></div><div class="rule-metrics"><span class="metric-pill">Conf: <span>68%</span></span><span class="metric-pill">Lift: <span>3.4x</span></span></div></div>
+            <div class="rule-card"><div class="rule-items"><span class="item">Yoga Mat</span> + <span class="item">Resistance Bands</span></div><div class="rule-arrow">→</div><div class="rule-items"><span class="item">Protein Powder</span></div><div class="rule-metrics"><span class="metric-pill">Conf: <span>54%</span></span><span class="metric-pill">Lift: <span>2.9x</span></span></div></div>
+            <div class="rule-card"><div class="rule-items"><span class="item">Coffee Maker</span></div><div class="rule-arrow">→</div><div class="rule-items"><span class="item">Coffee Beans</span> + <span class="item">Mug Set</span></div><div class="rule-metrics"><span class="metric-pill">Conf: <span>71%</span></span><span class="metric-pill">Lift: <span>4.1x</span></span></div></div>
+            <div class="rule-card"><div class="rule-items"><span class="item">Running Shoes</span></div><div class="rule-arrow">→</div><div class="rule-items"><span class="item">Sports Socks</span> + <span class="item">Insoles</span></div><div class="rule-metrics"><span class="metric-pill">Conf: <span>61%</span></span><span class="metric-pill">Lift: <span>3.2x</span></span></div></div>
+        </div>
+
+        <!-- QUALITY -->
+        <div class="page" id="page-quality">
+            <div class="page-header"><div><div class="page-title">✅ Data Quality Engine</div><div class="page-subtitle">Completeness · Uniqueness · Type Validity · Business Rules</div></div></div>
+            <div style="display:flex;align-items:center;gap:2rem;margin-bottom:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;">
+                <div style="text-align:center;"><div style="font-size:4rem;font-weight:900;font-family:var(--code);color:var(--accent4);">A</div><div style="font-size:0.75rem;color:var(--text2);">Overall Grade</div></div>
+                <div style="flex:1;">
+                    <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:0.3rem;"><span>Completeness</span><span style="color:var(--accent4);font-family:var(--code);">97.3%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:97.3%;background:var(--accent4);"></div></div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-top:0.8rem;margin-bottom:0.3rem;"><span>Uniqueness</span><span style="color:var(--accent4);font-family:var(--code);">99.8%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:99.8%;background:var(--accent4);"></div></div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-top:0.8rem;margin-bottom:0.3rem;"><span>Type Validity</span><span style="color:var(--accent4);font-family:var(--code);">98.9%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:98.9%;background:var(--accent4);"></div></div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-top:0.8rem;margin-bottom:0.3rem;"><span>Business Rules</span><span style="color:var(--accent3);font-family:var(--code);">91.2%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:91.2%;background:var(--accent3);"></div></div>
+                </div>
+            </div>
+            <div class="dq-grid">
+                <div class="dq-card"><div class="dq-card-header"><div class="dq-card-title">📋 Completeness</div><span class="grade-badge grade-A">A</span></div><div class="dq-score" style="color:var(--accent4)">97.3%</div><div style="font-size:0.75rem;color:var(--text2);margin-top:0.4rem;font-family:var(--code);">1,407 missing cells fixed</div></div>
+                <div class="dq-card"><div class="dq-card-header"><div class="dq-card-title">🔁 Uniqueness</div><span class="grade-badge grade-A">A+</span></div><div class="dq-score" style="color:var(--accent4)">99.8%</div><div style="font-size:0.75rem;color:var(--text2);margin-top:0.4rem;font-family:var(--code);">87 duplicate rows removed</div></div>
+                <div class="dq-card"><div class="dq-card-header"><div class="dq-card-title">🔢 Type Validity</div><span class="grade-badge grade-A">A</span></div><div class="dq-score" style="color:var(--accent4)">98.9%</div><div style="font-size:0.75rem;color:var(--text2);margin-top:0.4rem;font-family:var(--code);">573 coercions applied</div></div>
+                <div class="dq-card"><div class="dq-card-header"><div class="dq-card-title">📐 Consistency</div><span class="grade-badge grade-B">B+</span></div><div class="dq-score" style="color:var(--accent)">94.1%</div><div style="font-size:0.75rem;color:var(--text2);margin-top:0.4rem;font-family:var(--code);">Naming normalized</div></div>
+                <div class="dq-card"><div class="dq-card-header"><div class="dq-card-title">📏 Range Validity</div><span class="grade-badge grade-B">B</span></div><div class="dq-score" style="color:var(--accent)">92.7%</div><div style="font-size:0.75rem;color:var(--text2);margin-top:0.4rem;font-family:var(--code);">34 price outliers capped</div></div>
+                <div class="dq-card"><div class="dq-card-header"><div class="dq-card-title">📋 Business Rules</div><span class="grade-badge grade-B">B+</span></div><div class="dq-score" style="color:var(--accent)">91.2%</div><div style="font-size:0.75rem;color:var(--text2);margin-top:0.4rem;font-family:var(--code);">12 violations flagged</div></div>
+            </div>
+        </div>
+
+        <!-- SCHEMA -->
+        <div class="page" id="page-schema">
+            <div class="page-header"><div><div class="page-title">🗄️ Star Schema Model</div><div class="page-subtitle">Fact & Dimension Tables · Data Warehouse Design</div></div></div>
+            <div class="schema-diagram">
+                <div style="text-align:center;font-size:0.75rem;color:var(--text2);font-family:var(--code);margin-bottom:1.5rem;">DIMENSIONAL DATA MODEL — RETAIL DWH</div>
+                <div class="dim-row">
+                    <div class="dim-table"><div class="dim-title">dim_date</div><div class="dim-col">📌 date_key (PK)</div><div class="dim-col">full_date, month</div><div class="dim-col">quarter, year</div><div class="dim-col">is_holiday</div></div>
+                    <div class="dim-table"><div class="dim-title">dim_product</div><div class="dim-col">📌 product_key (PK)</div><div class="dim-col">product_name</div><div class="dim-col">category, brand</div><div class="dim-col">unit_cost</div></div>
+                    <div class="dim-table"><div class="dim-title">dim_customer</div><div class="dim-col">📌 customer_key (PK)</div><div class="dim-col">customer_id</div><div class="dim-col">segment, region</div><div class="dim-col">rfm_score</div></div>
+                </div>
+                <div style="text-align:center;margin:1rem 0;">
+                    <div class="fact-table">
+                        <div class="fact-table-title">⭐ fact_transactions</div>
+                        <div class="fact-col pk">🔑 transaction_key (PK)</div>
+                        <div class="fact-col fk">🔗 date_key (FK)</div>
+                        <div class="fact-col fk">🔗 product_key (FK)</div>
+                        <div class="fact-col fk">🔗 customer_key (FK)</div>
+                        <div class="fact-col" style="margin-top:0.4rem;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.3rem;">quantity_sold, revenue</div>
+                        <div class="fact-col">discount_pct, gross_margin</div>
+                    </div>
+                </div>
+                <div class="dim-row" style="justify-content:center;gap:2rem;">
+                    <div class="dim-table"><div class="dim-title">dim_store</div><div class="dim-col">📌 store_key (PK)</div><div class="dim-col">store_name, region</div><div class="dim-col">channel (online/offline)</div></div>
+                    <div class="dim-table"><div class="dim-title">dim_promotion</div><div class="dim-col">📌 promo_key (PK)</div><div class="dim-col">promo_name, type</div><div class="dim-col">discount_pct</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAT -->
+        <div class="page" id="page-chat">
+            <div class="page-header"><div><div class="page-title">🤖 AI Business Analyst</div><div class="page-subtitle">Powered by Groq API (llama-3.1-70b) · Context-aware · Local data</div></div></div>
+            <div class="chat-wrapper">
+                <div class="chat-card">
+                    <div class="chat-header">💬 AI Business Analyst<span class="chat-groq-badge">⚡ Groq API</span></div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="msg ai"><div class="msg-avatar ai">🤖</div><div class="msg-bubble">Hello! I'm your AI Business Analyst powered by <strong>Groq</strong>. I have full context of your retail data — <strong>52,847 transactions</strong>. What would you like to know?</div></div>
+                        <div class="msg user"><div class="msg-avatar user-av">👤</div><div class="msg-bubble">What are our best-selling products?</div></div>
+                        <div class="msg ai"><div class="msg-avatar ai">🤖</div><div class="msg-bubble">Based on your data, the <strong>top 3 best-selling products</strong> are:<br><br>1. <strong>Wireless Headphones Pro</strong> — 4,821 units (+32%)<br>2. <strong>Ergonomic Office Chair</strong> — 3,102 units (+18%)<br>3. <strong>Smart Coffee Maker</strong> — 2,987 units (+24%)<br><br>The <strong>Electronics</strong> category contributes 38% of total revenue.</div></div>
+                    </div>
+                    <div style="padding:0 0.8rem;"><div class="suggestions">
+                        <span class="suggestion-chip" onclick="sendSuggestion(this)">📈 Revenue growth drivers?</span>
+                        <span class="suggestion-chip" onclick="sendSuggestion(this)">🏆 Top customers by LTV?</span>
+                        <span class="suggestion-chip" onclick="sendSuggestion(this)">📦 Reorder recommendations?</span>
+                    </div></div>
+                    <div class="chat-input-row">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask anything about your retail data..." onkeydown="if(event.key==='Enter')sendChat()">
+                        <button class="chat-send-btn" onclick="sendChat()">Send</button>
+                    </div>
+                </div>
+                <div class="context-card">
+                    <h4>📊 Live Data Context</h4>
+                    <div class="context-metric"><span class="label">Total Revenue</span><span class="val">$2.41M</span></div>
+                    <div class="context-metric"><span class="label">Transactions</span><span class="val">52,847</span></div>
+                    <div class="context-metric"><span class="label">Customers</span><span class="val">8,934</span></div>
+                    <div class="context-divider"></div>
+                    <h4>🧠 ML Status</h4>
+                    <div class="context-metric"><span class="label">LSTM Accuracy</span><span class="val" style="color:var(--accent4)">94.2%</span></div>
+                    <div class="context-metric"><span class="label">Segments</span><span class="val">4 clusters</span></div>
+                    <div class="context-metric"><span class="label">Rules Found</span><span class="val">247</span></div>
+                    <div class="context-divider"></div>
+                    <h4>⚙️ API Config</h4>
+                    <div class="context-metric"><span class="label">Model</span><span class="val">llama-3.1-70b</span></div>
+                    <div class="context-metric"><span class="label">Latency</span><span class="val" style="color:var(--accent4)">~127ms</span></div>
+                    <div class="context-metric"><span class="label">Privacy</span><span class="val" style="color:var(--accent4)">✓ Local</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ARCH -->
+        <div class="page" id="page-arch">
+            <div class="page-header"><div><div class="page-title">🏗️ System Architecture</div><div class="page-subtitle">Production-ready · Hybrid AI · Scalable Design</div></div></div>
+            <div class="arch-container">
+                <div class="arch-layer frontend"><span class="arch-layer-label">FRONTEND</span><div class="arch-modules"><span class="arch-module">Streamlit App</span><span class="arch-module">Analytics Tab</span><span class="arch-module">Forecast Tab</span><span class="arch-module">AI Chat Tab</span><span class="arch-module">Plotly Charts</span></div></div>
+                <div class="arch-arrow">↕ REST API (HTTP/JSON)</div>
+                <div class="arch-layer backend"><span class="arch-layer-label">BACKEND</span><div class="arch-modules"><span class="arch-module">FastAPI main.py</span><span class="arch-module">data_processor.py</span><span class="arch-module">ml_models.py</span><span class="arch-module">chat_service.py</span><span class="arch-module">data_quality.py</span><span class="arch-module">data_models.py</span></div></div>
+                <div class="arch-arrow">↕ Local Inference + External API</div>
+                <div class="arch-layer ml"><span class="arch-layer-label">ML LAYER</span><div class="arch-modules"><span class="arch-module">PyTorch LSTM</span><span class="arch-module">K-Means (sklearn)</span><span class="arch-module">Apriori</span><span class="arch-module">Groq API (NLQ)</span></div></div>
+                <div class="arch-arrow">↕ Read/Write</div>
+                <div class="arch-layer data"><span class="arch-layer-label">DATA LAYER</span><div class="arch-modules"><span class="arch-module">CSV Ingestion</span><span class="arch-module">Pandas DataFrames</span><span class="arch-module">Star Schema</span><span class="arch-module">Metrics Layer</span><span class="arch-module">Data Lineage</span></div></div>
+            </div>
+        </div>
+
+    </main>
+</div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   WALKTHROUGH VIDEO CONTROLLER
+═══════════════════════════════════════════ */
+Chart.defaults.color = '#8b8fa8';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = "'Fira Code', monospace";
+Chart.defaults.font.size = 11;
+
+const TOTAL_DURATION = 28000; // 28 seconds total
+const SCENE_DURATIONS = [7000, 7000, 7000, 7000]; // 7s each
+
+let currentScene = 0;
+let isPaused = false;
+let elapsed = 0;
+let lastTick = null;
+let rafId = null;
+let sceneTimers = [];
+let sceneInitialized = [false,false,false,false];
+
+const sceneLabels = ['📂 Uploading CSV','⚙️ ETL Processing','📊 Analytics Ready','🤖 AI Chat'];
+const logMessages = [
+    { cls:'info', txt:'▶ [FastAPI] POST /upload — 200 OK' },
+    { cls:'ok',   txt:'✓ [Ingest] 52,847 rows loaded in 1.2s' },
+    { cls:'info', txt:'▶ [Detect] Mapping 12 columns to schema...' },
+    { cls:'ok',   txt:'✓ [Detect] 6/6 columns mapped with 98%+ confidence' },
+    { cls:'info', txt:'▶ [Clean] Scanning for nulls & duplicates...' },
+    { cls:'ok',   txt:'✓ [Clean] 1,243 nulls fixed · 87 duplicates removed' },
+    { cls:'warn', txt:'⚠ [Validate] 34 price outliers detected → capping' },
+    { cls:'ok',   txt:'✓ [Validate] Data Quality Grade: A (96.7%)' },
+    { cls:'info', txt:'▶ [ML] Training LSTM (120 epochs)...' },
+    { cls:'info', txt:'▶ [ML] Running K-Means (k=4) on RFM matrix...' },
+    { cls:'ok',   txt:'✓ [ML] Apriori complete — 247 rules found' },
+    { cls:'ok',   txt:'✓ [Schema] Star schema + metrics layer generated' },
+    { cls:'ok',   txt:'🎉 Pipeline complete · Dashboard ready!' },
+];
+let logIdx = 0;
+
+/* ── RAF-based timer ── */
+function startWalkthrough() {
+    lastTick = performance.now();
+    tick();
+}
+function tick(now) {
+    if (isPaused) return;
+    if (now === undefined) now = performance.now();
+    const dt = now - lastTick;
+    lastTick = now;
+    elapsed = Math.min(elapsed + dt, TOTAL_DURATION);
+
+    updateProgress();
+    const targetScene = getSceneForTime(elapsed);
+    if (targetScene !== currentScene) {
+        transitionToScene(targetScene);
+    }
+    if (elapsed < TOTAL_DURATION) {
+        rafId = requestAnimationFrame(tick);
+    } else {
+        // Loop back
+        setTimeout(() => { elapsed = 0; if (!isPaused) { lastTick = performance.now(); rafId = requestAnimationFrame(tick); } }, 2000);
+    }
+}
+
+function getSceneForTime(t) {
+    let acc = 0;
+    for (let i = 0; i < SCENE_DURATIONS.length; i++) {
+        acc += SCENE_DURATIONS[i];
+        if (t < acc) return i;
+    }
+    return SCENE_DURATIONS.length - 1;
+}
+
+function updateProgress() {
+    const pct = (elapsed / TOTAL_DURATION) * 100;
+    document.getElementById('vpProgressFill').style.width = pct + '%';
+    const secs = Math.floor(elapsed / 1000);
+    const m = Math.floor(secs/60), s = secs%60;
+    document.getElementById('vpTime').textContent = `${m}:${s.toString().padStart(2,'0')} / 0:28`;
+    document.getElementById('vpSceneLabel').textContent = sceneLabels[getSceneForTime(elapsed)] || '';
+}
+
+function transitionToScene(idx) {
+    document.getElementById('scene'+(currentScene+1)).classList.remove('active');
+    currentScene = idx;
+    document.getElementById('scene'+(idx+1)).classList.add('active');
+    // Update dots
+    document.querySelectorAll('.step-dot').forEach((d,i) => d.classList.toggle('active', i === idx));
+    // Update tab strip
+    ['tabAnalytics','tabForecast','tabForecast','tabChat'].forEach((id,i) => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('active', i === idx || (idx===2 && i===0));
+    });
+    document.getElementById('tabAnalytics').classList.toggle('active', idx===2);
+    document.getElementById('tabForecast').classList.toggle('active', idx===3);
+    document.getElementById('tabChat').classList.toggle('active', idx===3);
+    if (!sceneInitialized[idx]) { sceneInitialized[idx]=true; initScene(idx); }
+}
+
+function initScene(idx) {
+    if (idx === 0) initScene0();
+    if (idx === 1) initScene1();
+    if (idx === 2) initScene2();
+    if (idx === 3) initScene3();
+}
+
+/* ── SCENE 0: Upload animation ── */
+function initScene0() {
+    const zone = document.getElementById('uploadZone');
+    const fileItem = document.getElementById('fileItem');
+    const processBtn = document.getElementById('processBtn');
+    const colDetect = document.getElementById('colDetect');
+    const icon = document.getElementById('uploadIcon');
+    const title = document.getElementById('uploadTitle');
+
+    // Simulate cursor movement + drop
+    setTimeout(() => { zone.classList.add('hovering'); icon.textContent='📥'; title.textContent='Drop file here...'; }, 800);
+    setTimeout(() => {
+        zone.classList.remove('hovering');
+        zone.classList.add('dropped');
+        icon.textContent='✅';
+        title.textContent='File uploaded successfully!';
+        fileItem.classList.add('visible');
+    }, 2200);
+    setTimeout(() => { processBtn.classList.add('visible'); }, 3200);
+    setTimeout(() => { processBtn.classList.add('clicked'); }, 4500);
+    setTimeout(() => { colDetect.style.opacity='1'; }, 5200);
+}
+
+/* ── SCENE 1: ETL pipeline ── */
+const etlDetails = [
+    'Loading CSV · Parsing 52,847 rows',
+    'Mapping 12 columns → schema',
+    'Handling nulls · Removing duplicates',
+    'Completeness · Uniqueness · Range checks',
+    'LSTM · K-Means · Apriori (local inference)',
+    'Fact + Dimension tables · Metrics layer'
+];
+function initScene1() {
+    for (let i=0;i<6;i++) {
+        const el = document.getElementById('etl'+i);
+        const st = document.getElementById('etls'+i);
+        if (el) { el.className='etl-step'; el.style.opacity='0'; el.style.transform='translateX(-20px)'; }
+        if (st) { st.className='etl-status pending'; st.textContent='Waiting...'; }
+    }
+    logIdx = 0;
+    document.getElementById('logLines').innerHTML='<div class="log-line info">▶ [FastAPI] POST /upload — 200 OK</div>';
+
+    const stepDelay = [300,1100,1900,2700,3500,4300];
+    const runDelay  = [600,1400,2200,3000,3800,4600];
+    const doneDelay = [1000,1800,2600,3400,4200,5000];
+
+    for (let i=0;i<6;i++) {
+        const ii=i;
+        setTimeout(() => {
+            const el = document.getElementById('etl'+ii);
+            if (el) { el.classList.add('show'); }
+        }, stepDelay[i]);
+        setTimeout(() => {
+            const el = document.getElementById('etl'+ii);
+            const st = document.getElementById('etls'+ii);
+            if (el) el.classList.add('running');
+            if (st) { st.className='etl-status running'; st.innerHTML='<span class="spinner"></span>Running...'; }
+            addLog();
+        }, runDelay[i]);
+        setTimeout(() => {
+            const el = document.getElementById('etl'+ii);
+            const st = document.getElementById('etls'+ii);
+            if (el) { el.classList.remove('running'); el.classList.add('done'); }
+            if (st) { st.className='etl-status done'; st.textContent='✓ Done'; }
+            addLog();
+            if (ii===5) {
+                document.getElementById('pipelineStatusIcon').textContent='🎉';
+                document.getElementById('pipelineStatusText').textContent='Pipeline complete! Dashboard ready.';
+            }
+        }, doneDelay[i]);
+    }
+}
+function addLog() {
+    if (logIdx >= logMessages.length) return;
+    const m = logMessages[logIdx++];
+    const div = document.createElement('div');
+    div.className='log-line '+m.cls; div.textContent=m.txt;
+    const logContainer = document.getElementById('logLines');
+    if (logContainer) { logContainer.appendChild(div); }
+}
+
+/* ── SCENE 2: Analytics ── */
+let miniChartsInited = false;
+function initScene2() {
+    // Animate KPI cards
+    [0,1,2,3].forEach((i) => {
+        setTimeout(() => {
+            const el = document.getElementById('kpi'+i);
+            if (el) el.classList.add('show');
+        }, i*200 + 200);
+    });
+    setTimeout(() => { document.getElementById('miniChart0')?.classList.add('show'); }, 900);
+    setTimeout(() => { document.getElementById('miniChart1')?.classList.add('show'); }, 1200);
+    if (!miniChartsInited) { miniChartsInited=true; setTimeout(initMiniCharts, 400); }
+}
+function initMiniCharts() {
+    const r = document.getElementById('miniRevenueChart');
+    if (r) {
+        const g = r.getContext('2d');
+        const grad = g.createLinearGradient(0,0,0,150);
+        grad.addColorStop(0,'rgba(0,240,255,0.4)'); grad.addColorStop(1,'rgba(0,240,255,0)');
+        new Chart(r, {
+            type:'line',
+            data:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                datasets:[{data:[142,158,171,195,188,210,224,238,267,291,318,402],borderColor:'#00f0ff',backgroundColor:grad,fill:true,tension:0.4,pointRadius:2,borderWidth:2}]},
+            options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9}},grid:{display:false}},y:{ticks:{font:{size:9},callback:v=>'$'+v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+        });
+    }
+    const c = document.getElementById('miniCatChart');
+    if (c) {
+        new Chart(c, {
+            type:'doughnut',
+            data:{labels:['Electronics','Furniture','Appliances','Sports','Other'],
+                datasets:[{data:[38,22,18,12,10],backgroundColor:['#00f0ff','#a855f7','#ffd93d','#6bcb77','#ff6b6b'],borderWidth:0}]},
+            options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},padding:8}}}}
+        });
+    }
+}
+
+/* ── SCENE 3: AI Chat ── */
+const chatConversation = [
+    { role:'user', text:'What are our best-selling products?', delay:800 },
+    { role:'ai', text:'The top 3 are: <strong>Wireless Headphones Pro</strong> (4,821 units, +32%), <strong>Ergonomic Chair</strong> (3,102 units), and <strong>Smart Coffee Maker</strong> (2,987 units). Electronics leads with 38% of total revenue.', delay:2500 },
+    { role:'user', text:'Which customers are at risk?', delay:4200 },
+    { role:'ai', text:'<strong>1,424 at-risk customers</strong> identified by K-Means. Their last purchase was 60+ days ago. Avg LTV is $312 — worth recovering. Recommend a <strong>win-back campaign</strong> with 15% discount.', delay:5800 },
+];
+let chatSceneIdx = 0;
+const chatQueries = ['What are our best-selling products?','Which customers are at risk?'];
+let typewriterTimer = null;
+function initScene3() {
+    // Reset chat
+    const msgs = document.getElementById('sceneMsgs');
+    msgs.innerHTML='<div class="scene-msg ai show"><div class="scene-avatar ai">🤖</div><div class="scene-bubble">Hello! I have full context of your <strong>52,847 transactions</strong>. What would you like to know?</div></div>';
+    chatSceneIdx=0;
+
+    // Type first question
+    setTimeout(() => typeIntoField(chatQueries[0], () => {
+        flashSendBtn();
+        setTimeout(() => {
+            clearField();
+            addSceneUserMsg(chatQueries[0]);
+            setTimeout(showTypingThenAI.bind(null, chatConversation[1].text), 700);
+        }, 300);
+    }), 600);
+
+    // Second question
+    setTimeout(() => {
+        typeIntoField(chatQueries[1], () => {
+            flashSendBtn();
+            setTimeout(() => {
+                clearField();
+                addSceneUserMsg(chatQueries[1]);
+                setTimeout(showTypingThenAI.bind(null, chatConversation[3].text), 700);
+            }, 300);
+        });
+    }, 4000);
+}
+
+function typeIntoField(text, cb) {
+    const field = document.getElementById('sceneInputField');
+    if (!field) return;
+    let i=0;
+    field.innerHTML='<span class="tw-cursor"></span>';
+    clearInterval(typewriterTimer);
+    typewriterTimer = setInterval(() => {
+        if (i >= text.length) { clearInterval(typewriterTimer); if(cb) setTimeout(cb, 400); return; }
+        field.innerHTML = text.substring(0,i+1)+'<span class="tw-cursor"></span>';
+        i++;
+    }, 55);
+}
+function clearField() {
+    document.getElementById('sceneInputField').innerHTML='<span class="tw-cursor"></span>';
+}
+function flashSendBtn() {
+    const btn = document.getElementById('sceneSendBtn');
+    if (btn) { btn.style.background='var(--accent4)'; setTimeout(()=>btn.style.background='var(--accent)',400); }
+}
+function addSceneUserMsg(text) {
+    const msgs = document.getElementById('sceneMsgs');
+    const div=document.createElement('div');
+    div.className='scene-msg user';
+    div.innerHTML=`<div class="scene-avatar user-av">👤</div><div class="scene-bubble">${text}</div>`;
+    msgs.appendChild(div);
+    setTimeout(()=>div.classList.add('show'),50);
+    msgs.scrollTop=msgs.scrollHeight;
+}
+function showTypingThenAI(text) {
+    const msgs = document.getElementById('sceneMsgs');
+    const typing=document.createElement('div');
+    typing.className='scene-msg ai show';
+    typing.innerHTML='<div class="scene-avatar ai">🤖</div><div class="scene-bubble"><div class="typing-row"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>';
+    msgs.appendChild(typing);
+    msgs.scrollTop=msgs.scrollHeight;
+    setTimeout(() => {
+        typing.remove();
+        const ai=document.createElement('div');
+        ai.className='scene-msg ai';
+        ai.innerHTML=`<div class="scene-avatar ai">🤖</div><div class="scene-bubble">${text}</div>`;
+        msgs.appendChild(ai);
+        setTimeout(()=>ai.classList.add('show'),50);
+        msgs.scrollTop=msgs.scrollHeight;
+    }, 1300);
+}
+
+/* ── Controls ── */
+function togglePlay() {
+    isPaused = !isPaused;
+    const icon = document.getElementById('playIcon');
+    if (isPaused) {
+        icon.innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
+        cancelAnimationFrame(rafId);
+    } else {
+        icon.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+        lastTick = performance.now();
+        rafId = requestAnimationFrame(tick);
+    }
+}
+function restartWalkthrough() {
+    cancelAnimationFrame(rafId);
+    elapsed = 0; currentScene = -1; sceneInitialized = [false,false,false,false]; logIdx=0;
+    document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
+    document.getElementById('scene1').classList.add('active');
+    currentScene=0;
+    if (!isPaused) { lastTick=performance.now(); rafId=requestAnimationFrame(tick); }
+    initScene(0);
+}
+function seekWalkthrough(e) {
+    const wrap = document.getElementById('vpProgressWrap');
+    const rect = wrap.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left)/rect.width));
+    elapsed = pct * TOTAL_DURATION;
+    if (isPaused) { updateProgress(); }
+}
+function jumpToScene(idx) {
+    elapsed = SCENE_DURATIONS.slice(0,idx).reduce((a,b)=>a+b,0);
+    if (isPaused) { updateProgress(); const t=getSceneForTime(elapsed); if(t!==currentScene) transitionToScene(t); }
+}
+
+/* ── Start ── */
+initScene(0);
+startWalkthrough();
+
+
+/* ═══════════════════════════════════════════
+   INTERACTIVE DEMO CHARTS & LOGIC
+═══════════════════════════════════════════ */
+const chartInstances = {};
+function destroyChart(id) { if(chartInstances[id]){chartInstances[id].destroy();delete chartInstances[id];} }
+
+function mkGrad(ctx,c1,c2,h=220) {
+    const g=ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,c1); g.addColorStop(1,c2); return g;
+}
+
+// Init overview charts on load
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        const rCtx = document.getElementById('revenueChart');
+        if (rCtx) {
+            const g = mkGrad(rCtx.getContext('2d'),'rgba(0,240,255,0.4)','rgba(0,240,255,0)');
+            chartInstances.revenue = new Chart(rCtx, {
+                type:'line', data:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                    datasets:[{label:'Revenue ($K)',data:[142,158,171,195,188,210,224,238,267,291,318,402],borderColor:'#00f0ff',backgroundColor:g,fill:true,tension:0.4,pointRadius:4,borderWidth:2.5}]},
+                options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>'$'+v+'K'}}}}
+            });
+        }
+        const cCtx = document.getElementById('categoryChart');
+        if (cCtx) {
+            chartInstances.category = new Chart(cCtx, {
+                type:'doughnut', data:{labels:['Electronics','Furniture','Appliances','Sports','Wellness','Other'],
+                    datasets:[{data:[38,22,18,12,6,4],backgroundColor:['#00f0ff','#a855f7','#ffd93d','#6bcb77','#ff6b6b','#4d4dff'],borderWidth:0,hoverOffset:8}]},
+                options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{padding:12,font:{size:10}}}}}
+            });
+        }
+    }, 200);
+});
+
+let analyticsInited=false, forecastInited=false, segmentInited=false;
+
+function showPage(id, navEl) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.getElementById('page-'+id).classList.add('active');
+    if (navEl) navEl.classList.add('active');
+    if (id==='analytics' && !analyticsInited) { analyticsInited=true; setTimeout(initAnalyticsCharts,100); }
+    if (id==='forecast' && !forecastInited) { forecastInited=true; setTimeout(initForecastChart,100); }
+    if (id==='segments' && !segmentInited) { segmentInited=true; setTimeout(initSegmentChart,100); }
+}
+
+function initAnalyticsCharts() {
+    const ds = document.getElementById('dailySalesChart');
+    if (ds) {
+        const g=mkGrad(ds.getContext('2d'),'rgba(168,85,247,0.5)','rgba(168,85,247,0)');
+        chartInstances.daily=new Chart(ds,{type:'bar',data:{labels:Array.from({length:30},(_,i)=>`D${i+1}`),datasets:[{data:Array.from({length:30},()=>Math.floor(800+Math.random()*800)),backgroundColor:'rgba(168,85,247,0.6)',borderColor:'#a855f7',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:10},grid:{display:false}},y:{grid:{color:'rgba(255,255,255,0.04)'}}}}});
+    }
+    const rc=document.getElementById('revCatChart');
+    if(rc){
+        chartInstances.revCat=new Chart(rc,{type:'bar',data:{labels:['Electronics','Furniture','Appliances','Sports','Wellness'],datasets:[{label:'Revenue ($K)',data:[917,531,434,290,145],backgroundColor:['rgba(0,240,255,0.7)','rgba(168,85,247,0.7)','rgba(255,217,61,0.7)','rgba(107,203,119,0.7)','rgba(255,107,107,0.7)'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>'$'+v+'K'}},y:{grid:{display:false}}}}});
+    }
+}
+function initForecastChart() {
+    const fc=document.getElementById('forecastChart');
+    if(!fc) return;
+    const g=mkGrad(fc.getContext('2d'),'rgba(255,107,107,0.4)','rgba(255,107,107,0)',280);
+    const hist=Array.from({length:30},()=>Math.floor(1200+Math.random()*600));
+    const pred=Array.from({length:30},(_,i)=>Math.floor(1400+i*15+Math.random()*200));
+    const labels=[...hist.map((_,i)=>`D${i+1}`),...pred.map((_,i)=>`+${i+1}`)];
+    chartInstances.forecast=new Chart(fc,{type:'line',data:{labels,datasets:[{label:'Actual',data:[...hist,...Array(30).fill(null)],borderColor:'#00f0ff',pointRadius:0,borderWidth:2,tension:0.3},{label:'LSTM Predicted',data:[...Array(30).fill(null),...pred],borderColor:'#ff6b6b',backgroundColor:g,fill:true,borderDash:[6,3],pointRadius:0,borderWidth:2,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{ticks:{maxTicksLimit:15},grid:{display:false}},y:{grid:{color:'rgba(255,255,255,0.04)'}}}}});
+}
+function initSegmentChart() {
+    const cl=document.getElementById('clusterChart');
+    if(!cl) return;
+    const gen=(cx,cy,n,s)=>Array.from({length:n},()=>({x:cx+(Math.random()-0.5)*s,y:cy+(Math.random()-0.5)*s}));
+    chartInstances.cluster=new Chart(cl,{type:'scatter',data:{datasets:[{label:'Champions',data:gen(80,80,50,20),backgroundColor:'rgba(0,240,255,0.8)',pointRadius:5},{label:'Loyalists',data:gen(55,55,70,25),backgroundColor:'rgba(255,217,61,0.8)',pointRadius:4},{label:'New Customers',data:gen(25,35,60,20),backgroundColor:'rgba(107,203,119,0.8)',pointRadius:4},{label:'At-Risk',data:gen(65,25,40,20),backgroundColor:'rgba(255,107,107,0.8)',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{padding:10,font:{size:10}}}},scales:{x:{title:{display:true,text:'Recency Score'},grid:{color:'rgba(255,255,255,0.04)'}},y:{title:{display:true,text:'Monetary Score'},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+}
+
+function simulatePipeline() {
+    const steps=['ps0','ps1','ps2','ps3','ps4','ps5'];
+    steps.forEach(s=>{ const e=document.getElementById(s); if(e){e.className='pipeline-step pending'; const st=e.querySelector('.step-status'); if(st){st.className='step-status pending';st.textContent='Waiting...';}} });
+    steps.forEach((s,i)=>{
+        setTimeout(()=>{ if(i>0){const pe=document.getElementById(steps[i-1]); if(pe){pe.className='pipeline-step done'; const st=pe.querySelector('.step-status'); if(st){st.className='step-status done';st.textContent='✓ Complete';}}} const el=document.getElementById(s); if(el){el.className='pipeline-step active'; const st=el.querySelector('.step-status'); if(st){st.className='step-status active';st.textContent='⟳ Running...';}} if(i===steps.length-1){setTimeout(()=>{const le=document.getElementById(s); if(le){le.className='pipeline-step done'; const st=le.querySelector('.step-status'); if(st){st.className='step-status done';st.textContent='✓ Complete';}}},600);} },i*650);
+    });
+}
+
+const aiResponses=[
+    "Based on your retail data, **Electronics** leads with 38% of total revenue, driven primarily by Wireless Headphones Pro (+32% MoM). The **Q4 seasonal index** of 1.42 suggests you should increase inventory allocation for the holiday season.",
+    "Looking at your **Champions segment** (2,134 customers), they generate 4.2x more revenue per head than average. Retention rate is excellent at 89%. A VIP loyalty program could further improve LTV by an estimated 15–20%.",
+    "The LSTM model predicts a **+22% demand surge** in Q4. Based on current stock levels, I recommend reordering Wireless Headphones Pro within **7 days** to avoid stockouts during peak season.",
+    "Your **Apriori analysis** reveals: Coffee Maker → Coffee Beans + Mug Set with 4.1x lift. Implementing a 'Complete the Set' PDP recommendation could increase AOV by an estimated **$12–18** per transaction."
+];
+let aiIdx=0;
+
+function appendMessage(role,text){
+    const c=document.getElementById('chatMessages');
+    const d=document.createElement('div'); d.className='msg '+(role==='user'?'user':'ai');
+    const av=document.createElement('div'); av.className='msg-avatar '+(role==='user'?'user-av':'ai'); av.textContent=role==='user'?'👤':'🤖';
+    const b=document.createElement('div'); b.className='msg-bubble'; b.innerHTML=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    d.appendChild(av); d.appendChild(b); c.appendChild(d); c.scrollTop=c.scrollHeight;
+}
+function sendChat(){
+    const inp=document.getElementById('chatInput'); const t=inp.value.trim(); if(!t) return;
+    appendMessage('user',t); inp.value='';
+    const c=document.getElementById('chatMessages');
+    const td=document.createElement('div'); td.className='msg ai'; td.id='typing';
+    const av=document.createElement('div'); av.className='msg-avatar ai'; av.textContent='🤖';
+    const b=document.createElement('div'); b.className='msg-bubble'; b.innerHTML='<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+    td.appendChild(av); td.appendChild(b); c.appendChild(td); c.scrollTop=c.scrollHeight;
+    setTimeout(()=>{ td.remove(); appendMessage('ai',aiResponses[aiIdx%aiResponses.length]); aiIdx++; },1500+Math.random()*600);
+}
+function sendSuggestion(el){
+    const inp=document.getElementById('chatInput'); inp.value=el.textContent.trim(); sendChat();
+}
+</script>
+</body>
+</html>
