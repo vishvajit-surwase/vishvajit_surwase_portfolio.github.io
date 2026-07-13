@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VS.SYS — Portfolio Command Center</title>
+    <!-- Intentionally no SEO tags so search engines don't index this page -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --bg: #080c14;
+            --bg2: #0e1420;
+            --card: #111827;
+            --card2: #151d2e;
+            --cyan: #00f0ff;
+            --magenta: #ff0055;
+            --yellow: #ffd93d;
+            --green: #00ff88;
+            --purple: #a855f7;
+            --red: #ff4757;
+            --orange: #ff6b35;
+            --text: #e2e8f0;
+            --text2: #64748b;
+            --border: rgba(0,240,255,0.12);
+            --font: 'Inter', sans-serif;
+            --code: 'Fira Code', monospace;
+            --heading: 'Orbitron', sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html, body { min-height:100%; background:var(--bg); color:var(--text); font-family:var(--font); }
+
+        /* ── Animated background grid ── */
+        body::before {
+            content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+            background: linear-gradient(rgba(0,240,255,0.03) 1px,transparent 1px),
+                        linear-gradient(90deg,rgba(0,240,255,0.03) 1px,transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* ══════════════════════════════════════
+           LOGIN SCREEN
+        ══════════════════════════════════════ */
+        #loginScreen {
+            position: fixed; inset: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--bg);
+        }
+        .login-panel {
+            width: 420px; position: relative;
+        }
+        .login-glow {
+            position: absolute; inset: -2px; border-radius: 18px;
+            background: linear-gradient(135deg, var(--cyan), var(--purple), var(--magenta));
+            z-index: -1; filter: blur(1px);
+            animation: borderRotate 4s linear infinite;
+        }
+        @keyframes borderRotate {
+            0% { background: linear-gradient(0deg, var(--cyan), var(--purple)); }
+            50% { background: linear-gradient(180deg, var(--magenta), var(--cyan)); }
+            100% { background: linear-gradient(360deg, var(--cyan), var(--purple)); }
+        }
+        .login-inner {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 3rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-inner::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--purple), var(--magenta));
+        }
+        .login-logo {
+            font-family: var(--heading);
+            font-size: 2rem; font-weight: 900;
+            text-align: center; margin-bottom: 0.3rem;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .login-subtitle {
+            text-align: center; font-family: var(--code);
+            font-size: 0.72rem; color: var(--text2);
+            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2rem;
+        }
+        .login-field { margin-bottom: 1.2rem; }
+        .login-field label {
+            display: block; font-size: 0.72rem; font-family: var(--code);
+            color: var(--cyan); letter-spacing: 1px; text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+        .login-field input {
+            width: 100%; background: rgba(0,240,255,0.04);
+            border: 1px solid rgba(0,240,255,0.2);
+            border-radius: 8px; padding: 0.75rem 1rem;
+            color: var(--text); font-family: var(--code); font-size: 0.9rem;
+            outline: none; transition: all 0.3s;
+        }
+        .login-field input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 16px rgba(0,240,255,0.2);
+            background: rgba(0,240,255,0.07);
+        }
+        .login-btn {
+            width: 100%; padding: 0.85rem;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            border: none; border-radius: 8px;
+            color: #0a0f1a; font-weight: 700; font-size: 1rem;
+            font-family: var(--heading); letter-spacing: 2px;
+            cursor: pointer; margin-top: 0.5rem;
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,240,255,0.4); }
+        .login-btn:active { transform: scale(0.98); }
+        .login-error {
+            background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3);
+            border-radius: 6px; padding: 0.6rem 1rem;
+            color: var(--red); font-size: 0.8rem; font-family: var(--code);
+            margin-top: 1rem; text-align: center; display: none;
+        }
+        .login-tag {
+            text-align: center; margin-top: 1.5rem;
+            font-size: 0.68rem; color: var(--text2); font-family: var(--code);
+        }
+        /* Shake animation on wrong password */
+        @keyframes shake {
+            0%,100%{transform:translateX(0)}
+            20%{transform:translateX(-8px)}
+            40%{transform:translateX(8px)}
+            60%{transform:translateX(-5px)}
+            80%{transform:translateX(5px)}
+        }
+        .shake { animation: shake 0.4s ease; }
+
+        /* ══════════════════════════════════════
+           DASHBOARD SHELL
+        ══════════════════════════════════════ */
+        #dashboard { display: none; position: relative; z-index: 1; min-height: 100vh; }
+
+        /* Top Bar */
+        .dash-topbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(14,20,32,0.95); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.8rem 2rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .dash-logo { font-family: var(--heading); font-size: 1.1rem; color: var(--cyan); font-weight:900; }
+        .dash-logo span { color: var(--purple); }
+        .dash-live {
+            display: flex; align-items: center; gap: 0.4rem;
+            font-size: 0.72rem; font-family: var(--code); color: var(--green);
+        }
+        .live-dot { width:7px; height:7px; border-radius:50%; background:var(--green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.5)} }
+        .dash-actions { margin-left: auto; display: flex; gap: 0.6rem; align-items: center; }
+        .dash-btn {
+            padding: 0.35rem 0.9rem; border-radius: 6px; font-size: 0.78rem;
+            font-family: var(--code); cursor: pointer; border: none; transition: all 0.2s;
+        }
+        .dash-btn.outline { background: transparent; border: 1px solid var(--border); color: var(--text2); }
+        .dash-btn.outline:hover { border-color: var(--cyan); color: var(--cyan); }
+        .dash-btn.danger { background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3); color: var(--red); }
+        .dash-btn.danger:hover { background: rgba(255,71,87,0.2); }
+        .dash-owner-badge {
+            background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3);
+            color: var(--green); font-size: 0.72rem; font-family: var(--code);
+            padding: 0.25rem 0.7rem; border-radius: 4px;
+        }
+
+        /* Main content area */
+        .dash-main { padding: 1.8rem 2rem; max-width: 1440px; margin: 0 auto; }
+
+        /* Section title */
+        .section-label {
+            font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--text2); font-family: var(--code); margin-bottom: 0.8rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+        /* ── Stat Cards ── */
+        .stats-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 1rem; margin-bottom: 1.8rem; }
+        .stat-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.3rem 1.2rem;
+            position: relative; overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.5); }
+        .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+        .stat-card.c1::before { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
+        .stat-card.c2::before { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+        .stat-card.c3::before { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+        .stat-card.c4::before { background: linear-gradient(90deg, var(--purple), var(--magenta)); }
+        .stat-card.c5::before { background: linear-gradient(90deg, var(--magenta), var(--red)); }
+        .stat-icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+        .stat-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); margin-bottom: 0.3rem; }
+        .stat-value { font-size: 2.2rem; font-weight: 700; font-family: var(--code); line-height: 1; }
+        .stat-sub { font-size: 0.72rem; color: var(--text2); font-family: var(--code); margin-top: 0.4rem; }
+        .stat-value.cyan   { color: var(--cyan); }
+        .stat-value.green  { color: var(--green); }
+        .stat-value.yellow { color: var(--yellow); }
+        .stat-value.purple { color: var(--purple); }
+        .stat-value.red    { color: var(--red); }
+
+        /* ── Two-col layout ── */
+        .two-col { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1rem; margin-bottom: 1.8rem; }
+        .three-col-charts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.8rem; }
+
+        /* ── Cards ── */
+        .dash-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.3rem; overflow: hidden;
+        }
+        .card-title {
+            font-size: 0.82rem; font-weight: 600; margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 0.5rem; color: var(--text);
+        }
+        .card-title .tag {
+            font-size: 0.62rem; font-family: var(--code);
+            background: rgba(0,240,255,0.1); color: var(--cyan);
+            padding: 0.1rem 0.4rem; border-radius: 3px;
+        }
+        .chart-wrap { position: relative; height: 200px; }
+
+        /* ── Map ── */
+        #visitorMap {
+            height: 280px; border-radius: 8px; overflow: hidden;
+            filter: hue-rotate(180deg) saturate(0.6) brightness(0.7);
+        }
+
+        /* ── Visitor Table ── */
+        .table-wrap { overflow-x: auto; }
+        .visitor-table { width: 100%; border-collapse: collapse; font-size: 0.79rem; }
+        .visitor-table th {
+            text-align: left; padding: 0.6rem 0.8rem;
+            color: var(--text2); border-bottom: 1px solid var(--border);
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px;
+            white-space: nowrap;
+        }
+        .visitor-table td {
+            padding: 0.65rem 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-family: var(--code); font-size: 0.78rem; white-space: nowrap;
+        }
+        .visitor-table tr:last-child td { border-bottom: none; }
+        .visitor-table tr:hover td { background: rgba(0,240,255,0.03); }
+        .visitor-table td.flag { font-size: 1.1rem; padding-right: 0.2rem; }
+        .badge {
+            display: inline-block; padding: 0.1rem 0.5rem; border-radius: 4px;
+            font-size: 0.68rem; font-weight: 600;
+        }
+        .badge.desktop { background: rgba(0,240,255,0.1); color: var(--cyan); }
+        .badge.mobile  { background: rgba(168,85,247,0.15); color: var(--purple); }
+        .badge.direct  { background: rgba(255,217,61,0.1); color: var(--yellow); }
+        .badge.google  { background: rgba(0,255,136,0.1); color: var(--green); }
+        .badge.linkedin{ background: rgba(0,119,181,0.2); color: #60a5fa; }
+        .badge.github  { background: rgba(255,255,255,0.07); color: #cbd5e1; }
+        .time-ago { color: var(--text2); }
+
+        /* Pagination */
+        .pagination {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-top: 1rem; justify-content: flex-end;
+        }
+        .page-btn {
+            padding: 0.3rem 0.7rem; border-radius: 5px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            color: var(--text2); font-size: 0.78rem; font-family: var(--code);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .page-btn:hover, .page-btn.active { background: rgba(0,240,255,0.1); color: var(--cyan); border-color: var(--cyan); }
+        .page-btn:disabled { opacity: 0.3; cursor: default; }
+
+        /* ── Email note ── */
+        .email-note {
+            background: rgba(255,217,61,0.06); border: 1px solid rgba(255,217,61,0.2);
+            border-radius: 8px; padding: 0.9rem 1.2rem; margin-bottom: 1rem;
+            font-size: 0.8rem; color: var(--yellow); display: flex; gap: 0.7rem;
+        }
+        .email-note svg { flex-shrink: 0; margin-top: 1px; }
+
+        /* ── Owner mode toggle ── */
+        .owner-toggle {
+            background: rgba(0,255,136,0.06); border: 1px solid rgba(0,255,136,0.2);
+            border-radius: 8px; padding: 0.9rem 1.2rem; margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .owner-toggle-text { font-size: 0.82rem; color: var(--text2); flex: 1; }
+        .owner-toggle-text strong { color: var(--green); }
+        .toggle-switch-wrap { display: flex; align-items: center; gap: 0.6rem; }
+        .toggle-switch {
+            position: relative; width: 44px; height: 24px;
+            background: rgba(255,255,255,0.1); border-radius: 12px;
+            cursor: pointer; transition: background 0.3s;
+        }
+        .toggle-switch.on { background: var(--green); }
+        .toggle-knob {
+            position: absolute; top: 3px; left: 3px;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: white; transition: transform 0.3s;
+        }
+        .toggle-switch.on .toggle-knob { transform: translateX(20px); }
+        .toggle-label { font-size: 0.78rem; font-family: var(--code); color: var(--text2); }
+
+        /* ── Config panel ── */
+        .config-panel {
+            background: var(--card2); border: 1px solid rgba(255,217,61,0.2);
+            border-radius: 10px; padding: 1.2rem; margin-bottom: 1.5rem;
+        }
+        .config-panel h4 { font-size: 0.8rem; color: var(--yellow); margin-bottom: 0.8rem; font-family: var(--code); }
+        .config-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.6rem; }
+        .config-field label { display: block; font-size: 0.66rem; color: var(--text2); font-family: var(--code); margin-bottom: 0.3rem; }
+        .config-field input {
+            width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            border-radius: 6px; padding: 0.5rem 0.7rem;
+            color: var(--text); font-family: var(--code); font-size: 0.78rem; outline: none;
+        }
+        .config-field input:focus { border-color: var(--yellow); }
+
+        /* ── No data empty state ── */
+        .empty-state {
+            text-align: center; padding: 3rem 2rem;
+        }
+        .empty-state .e-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .empty-state h3 { font-family: var(--code); color: var(--text2); margin-bottom: 0.5rem; }
+        .empty-state p { font-size: 0.82rem; color: var(--text2); max-width: 400px; margin: 0 auto; }
+
+        /* Search & filter */
+        .table-controls {
+            display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem;
+        }
+        .search-input {
+            flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            border-radius: 7px; padding: 0.5rem 0.9rem;
+            color: var(--text); font-family: var(--code); font-size: 0.82rem; outline: none;
+        }
+        .search-input:focus { border-color: var(--cyan); }
+        .filter-select {
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            border-radius: 7px; padding: 0.5rem 0.8rem;
+            color: var(--text); font-family: var(--code); font-size: 0.8rem; outline: none;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width:6px; height:6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius:3px; }
+
+        /* Mode badge */
+        .mode-badge {
+            font-size: 0.65rem; font-family: var(--code); letter-spacing: 1px;
+            padding: 0.2rem 0.6rem; border-radius: 4px;
+        }
+        .mode-badge.local { background: rgba(255,217,61,0.12); color: var(--yellow); border: 1px solid rgba(255,217,61,0.3); }
+        .mode-badge.cloud { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+
+        @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(3,1fr); } }
+        @media (max-width: 900px) {
+            .two-col, .three-col-charts { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2,1fr); }
+            .config-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════════ -->
+<div id="loginScreen">
+    <div class="login-panel">
+        <div class="login-glow"></div>
+        <div class="login-inner">
+            <div class="login-logo">VS.SYS</div>
+            <div class="login-subtitle">Portfolio Command Center · Restricted Access</div>
+
+            <div class="login-field">
+                <label>Username</label>
+                <input type="text" id="loginUser" placeholder="Enter username" autocomplete="off"
+                       onkeydown="if(event.key==='Enter') document.getElementById('loginPass').focus()">
+            </div>
+            <div class="login-field">
+                <label>Password</label>
+                <input type="password" id="loginPass" placeholder="Enter password"
+                       onkeydown="if(event.key==='Enter') attemptLogin()">
+            </div>
+            <button class="login-btn" onclick="attemptLogin()">ACCESS SYSTEM</button>
+            <div class="login-error" id="loginError">⚠ Invalid credentials. Access denied.</div>
+            <div class="login-tag">Authorized personnel only · Vishvajit Surwase Portfolio</div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     DASHBOARD
+══════════════════════════════════════════════ -->
+<div id="dashboard">
+
+    <!-- Top Bar -->
+    <div class="dash-topbar">
+        <div class="dash-logo">VS<span>.SYS</span></div>
+        <div class="dash-live">
+            <span class="live-dot"></span>
+            PORTFOLIO COMMAND CENTER
+        </div>
+        <span class="mode-badge local" id="modeBadge">LOCAL MODE</span>
+        <div class="dash-actions">
+            <span class="dash-owner-badge" id="ownerStatus">👤 Owner: Vishvajit</span>
+            <button class="dash-btn outline" onclick="refreshData()">⟳ Refresh</button>
+            <button class="dash-btn outline" onclick="exportCSV()">⬇ Export CSV</button>
+            <button class="dash-btn danger" onclick="logout()">⎋ Logout</button>
+        </div>
+    </div>
+
+    <div class="dash-main">
+
+        <!-- ── Owner Tracking Toggle ── -->
+        <div class="owner-toggle">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <div class="owner-toggle-text">
+                <strong>Owner Mode:</strong> When enabled, your own visits to the portfolio will <strong>NOT be tracked</strong> in the visitor log. Toggle this on your device to keep analytics clean.
+            </div>
+            <div class="toggle-switch-wrap">
+                <div class="toggle-switch" id="ownerToggle" onclick="toggleOwnerMode()">
+                    <div class="toggle-knob"></div>
+                </div>
+                <span class="toggle-label" id="ownerToggleLabel">OFF</span>
+            </div>
+        </div>
+
+        <!-- ── Stat Cards ── -->
+        <div class="section-label">📊 Visitor Analytics</div>
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card c1">
+                <div class="stat-icon">👁️</div>
+                <div class="stat-label">Total Visits</div>
+                <div class="stat-value cyan" id="statTotal">—</div>
+                <div class="stat-sub" id="statTotalSub">Loading...</div>
+            </div>
+            <div class="stat-card c2">
+                <div class="stat-icon">📅</div>
+                <div class="stat-label">Today's Visits</div>
+                <div class="stat-value green" id="statToday">—</div>
+                <div class="stat-sub" id="statTodaySub">Loading...</div>
+            </div>
+            <div class="stat-card c3">
+                <div class="stat-icon">🌍</div>
+                <div class="stat-label">Countries</div>
+                <div class="stat-value yellow" id="statCountries">—</div>
+                <div class="stat-sub" id="statTopCountry">Loading...</div>
+            </div>
+            <div class="stat-card c4">
+                <div class="stat-icon">📱</div>
+                <div class="stat-label">Mobile Visitors</div>
+                <div class="stat-value purple" id="statMobile">—</div>
+                <div class="stat-sub" id="statMobileSub">vs Desktop</div>
+            </div>
+            <div class="stat-card c5">
+                <div class="stat-icon">🔗</div>
+                <div class="stat-label">Top Referrer</div>
+                <div class="stat-value red" id="statReferrer" style="font-size:1.3rem;">—</div>
+                <div class="stat-sub" id="statReferrerSub">Traffic source</div>
+            </div>
+        </div>
+
+        <!-- ── Charts Row ── -->
+        <div class="three-col-charts">
+            <div class="dash-card">
+                <div class="card-title">📅 Visits — Last 7 Days <span class="tag">TREND</span></div>
+                <div class="chart-wrap"><canvas id="visitsChart"></canvas></div>
+            </div>
+            <div class="dash-card">
+                <div class="card-title">🌐 Browser Distribution</div>
+                <div class="chart-wrap"><canvas id="browserChart"></canvas></div>
+            </div>
+            <div class="dash-card">
+                <div class="card-title">🖥️ Device Type</div>
+                <div class="chart-wrap"><canvas id="deviceChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- ── Map + Country Table ── -->
+        <div class="two-col" style="margin-bottom:1.8rem;">
+            <div class="dash-card">
+                <div class="card-title">🗺️ Visitor Locations <span class="tag">GEO</span></div>
+                <div id="visitorMap"></div>
+            </div>
+            <div class="dash-card">
+                <div class="card-title">🌍 Top Countries</div>
+                <div id="countryList" style="overflow-y:auto;max-height:300px;"></div>
+            </div>
+        </div>
+
+        <!-- ── Email Note ── -->
+        <div class="email-note">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>
+                <strong>Email Detection:</strong> Browsers never expose a user's email address to websites for privacy and security reasons. It's technically impossible to detect visitor emails without them explicitly submitting a form or logging in (e.g., via Google OAuth). You can capture emails by adding a <strong>Contact / Newsletter form</strong> to your portfolio.
+            </div>
+        </div>
+
+        <!-- ── JSONBin Config Panel ── -->
+        <div class="config-panel" id="configPanel">
+            <h4>⚙️ Production Setup — JSONBin.io (Cross-Device Tracking)</h4>
+            <p style="font-size:0.78rem;color:var(--text2);margin-bottom:0.8rem;">
+                Currently running in <strong style="color:var(--yellow)">LOCAL MODE</strong> — tracking stored on this browser only.
+                To track visitors from ANY device, fill in your JSONBin.io credentials and update <code>tracker.js</code>.
+            </p>
+            <div class="config-row">
+                <div class="config-field">
+                    <label>JSONBin Bin ID</label>
+                    <input type="text" id="cfgBinId" placeholder="e.g. 64abc123f012345678">
+                </div>
+                <div class="config-field">
+                    <label>JSONBin Master Key</label>
+                    <input type="password" id="cfgApiKey" placeholder="$2a$10$...">
+                </div>
+            </div>
+            <button class="dash-btn outline" onclick="saveConfig()" style="margin-top:0.4rem;">💾 Save & Switch to Cloud Mode</button>
+            <span style="font-size:0.72rem;color:var(--text2);font-family:var(--code);margin-left:0.8rem;">
+                Get free credentials at <a href="https://jsonbin.io" target="_blank" style="color:var(--cyan);">jsonbin.io</a>
+            </span>
+        </div>
+
+        <!-- ── Visitor Log Table ── -->
+        <div class="section-label">📋 Visitor Log</div>
+        <div class="dash-card">
+            <div class="table-controls">
+                <input class="search-input" id="searchInput" placeholder="🔍 Search by country, city, browser, IP..." oninput="filterTable()">
+                <select class="filter-select" id="deviceFilter" onchange="filterTable()">
+                    <option value="">All Devices</option>
+                    <option value="Desktop">Desktop</option>
+                    <option value="Mobile">Mobile</option>
+                </select>
+                <select class="filter-select" id="countryFilter" onchange="filterTable()">
+                    <option value="">All Countries</option>
+                </select>
+            </div>
+
+            <div class="table-wrap">
+                <table class="visitor-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Time</th>
+                            <th>Country</th>
+                            <th>City</th>
+                            <th>IP Address</th>
+                            <th>Browser</th>
+                            <th>OS</th>
+                            <th>Device</th>
+                            <th>Referrer</th>
+                            <th>Screen</th>
+                            <th>Language</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody id="visitorTableBody"></tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display:none;">
+                    <div class="e-icon">📭</div>
+                    <h3>No visitor data yet</h3>
+                    <p>Once visitors open your portfolio, their data will appear here. Make sure <code>tracker.js</code> is linked in <code>index.html</code>.</p>
+                </div>
+            </div>
+
+            <div class="pagination" id="pagination"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════ */
+const JSONBIN_BIN_ID  = localStorage.getItem('vs_cfg_bin') || '6a54cafada38895dfe564f12';
+const JSONBIN_API_KEY = localStorage.getItem('vs_cfg_key') || 'YOUR_MASTER_KEY';
+const USE_JSONBIN     = localStorage.getItem('vs_cfg_mode') === 'cloud'
+                        && JSONBIN_BIN_ID !== 'YOUR_BIN_ID'
+                        && JSONBIN_API_KEY !== 'YOUR_MASTER_KEY';
+
+/* ══════════════════════════════════════════
+   AUTH — credentials obfuscated (base64)
+══════════════════════════════════════════ */
+const _u = atob('dmlzaHZhaml0');          // vishvajit
+const _p = atob('dmlzaHZhaml0QDAw');      // vishvajit@00
+
+function attemptLogin() {
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value;
+    if (u === _u && p === _p) {
+        sessionStorage.setItem('vs_auth', '1');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        initDashboard();
+    } else {
+        const panel = document.querySelector('.login-panel');
+        const err = document.getElementById('loginError');
+        err.style.display = 'block';
+        panel.classList.remove('shake');
+        void panel.offsetWidth; // reflow
+        panel.classList.add('shake');
+        document.getElementById('loginPass').value = '';
+    }
+}
+
+function logout() {
+    sessionStorage.removeItem('vs_auth');
+    location.reload();
+}
+
+/* Check session on load */
+window.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('vs_auth') === '1') {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        initDashboard();
+    }
+    // Restore login input state
+    document.getElementById('loginUser').focus();
+});
+
+/* ══════════════════════════════════════════
+   DATA LOADING
+══════════════════════════════════════════ */
+let allVisits = [];
+let filteredVisits = [];
+let currentPage = 1;
+const PAGE_SIZE = 25;
+let map = null;
+let markersLayer = null;
+let chartVisits = null, chartBrowser = null, chartDevice = null;
+
+async function loadVisits() {
+    if (USE_JSONBIN) {
+        try {
+            const r = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+                headers: { 'X-Master-Key': JSONBIN_API_KEY }
+            });
+            const data = await r.json();
+            return data.record?.visits || [];
+        } catch { return []; }
+    } else {
+        const stored = localStorage.getItem('vs_visits');
+        return stored ? JSON.parse(stored).visits || [] : [];
+    }
+}
+
+async function initDashboard() {
+    updateModeBadge();
+    initOwnerToggle();
+    allVisits = await loadVisits();
+    filteredVisits = [...allVisits];
+    renderStats();
+    renderCharts();
+    initMap();
+    renderCountryList();
+    renderTable();
+    populateFilters();
+    document.getElementById('configPanel').style.display = USE_JSONBIN ? 'none' : 'block';
+}
+
+async function refreshData() {
+    allVisits = await loadVisits();
+    filteredVisits = [...allVisits];
+    currentPage = 1;
+    renderStats();
+    updateCharts();
+    updateMapMarkers();
+    renderCountryList();
+    renderTable();
+}
+
+/* ══════════════════════════════════════════
+   STATS
+══════════════════════════════════════════ */
+function renderStats() {
+    const visits = allVisits;
+    const today = new Date().toDateString();
+    const todayVisits = visits.filter(v => new Date(v.timestamp).toDateString() === today);
+    const countries = [...new Set(visits.map(v => v.country).filter(c => c && c !== 'Unknown'))];
+    const mobileCount = visits.filter(v => v.device === 'Mobile').length;
+    const mobilePct = visits.length ? Math.round(mobileCount / visits.length * 100) : 0;
+
+    // Top referrer
+    const refMap = {};
+    visits.forEach(v => { const r = v.referrer || 'Direct'; refMap[r] = (refMap[r]||0)+1; });
+    const topRef = Object.entries(refMap).sort((a,b)=>b[1]-a[1])[0];
+    const topCountry = countries.length ? getMostCommon(visits.map(v=>v.country)) : '—';
+
+    setText('statTotal', visits.length.toLocaleString());
+    setText('statTotalSub', `+${todayVisits.length} today`);
+    setText('statToday', todayVisits.length.toLocaleString());
+    setText('statTodaySub', `This session: ${visits.length ? getWeekCount(visits) : 0} this week`);
+    setText('statCountries', countries.length.toLocaleString());
+    setText('statTopCountry', `Top: ${topCountry}`);
+    setText('statMobile', mobilePct + '%');
+    setText('statMobileSub', `${100-mobilePct}% Desktop`);
+    setText('statReferrer', topRef ? topRef[0] : '—');
+    setText('statReferrerSub', topRef ? `${topRef[1]} visits` : 'No data yet');
+}
+
+function setText(id, val) { const el = document.getElementById(id); if(el) el.textContent = val; }
+function getMostCommon(arr) {
+    const m = {}; arr.forEach(v => m[v] = (m[v]||0)+1);
+    return Object.entries(m).sort((a,b)=>b[1]-a[1])[0]?.[0] || '—';
+}
+function getWeekCount(visits) {
+    const weekAgo = Date.now() - 7*24*3600*1000;
+    return visits.filter(v => new Date(v.timestamp).getTime() > weekAgo).length;
+}
+
+/* ══════════════════════════════════════════
+   CHARTS
+══════════════════════════════════════════ */
+Chart.defaults.color = '#64748b';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = "'Fira Code', monospace";
+Chart.defaults.font.size = 10;
+
+function renderCharts() {
+    // Last 7 days visits
+    const labels = [];
+    const vals = [];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        labels.push(d.toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'}));
+        vals.push(allVisits.filter(v => new Date(v.timestamp).toDateString() === d.toDateString()).length);
+    }
+    const vCtx = document.getElementById('visitsChart');
+    if (vCtx) {
+        const g = vCtx.getContext('2d');
+        const grad = g.createLinearGradient(0,0,0,180);
+        grad.addColorStop(0,'rgba(0,240,255,0.4)'); grad.addColorStop(1,'rgba(0,240,255,0)');
+        chartVisits = new Chart(vCtx, {
+            type: 'line',
+            data: { labels, datasets: [{ data: vals, borderColor:'#00f0ff', backgroundColor: grad, fill:true, tension:0.4, pointRadius:4, borderWidth:2, pointBackgroundColor:'#00f0ff' }] },
+            options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{display:false},ticks:{maxTicksLimit:7}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{stepSize:1}}} }
+        });
+    }
+
+    // Browser pie
+    const bMap = {};
+    allVisits.forEach(v => { const b = v.browser||'Other'; bMap[b]=(bMap[b]||0)+1; });
+    const bLabels = Object.keys(bMap), bData = Object.values(bMap);
+    const bCtx = document.getElementById('browserChart');
+    if (bCtx) {
+        chartBrowser = new Chart(bCtx, {
+            type: 'doughnut',
+            data: { labels: bLabels, datasets: [{ data: bData, backgroundColor:['#00f0ff','#a855f7','#ffd93d','#6bcb77','#ff6b6b','#ff6b35'], borderWidth:0, hoverOffset:8 }] },
+            options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right',labels:{padding:8,font:{size:9}}}} }
+        });
+    }
+
+    // Device bar
+    const desktop = allVisits.filter(v=>v.device==='Desktop').length;
+    const mobile  = allVisits.filter(v=>v.device==='Mobile').length;
+    const dCtx = document.getElementById('deviceChart');
+    if (dCtx) {
+        chartDevice = new Chart(dCtx, {
+            type: 'bar',
+            data: { labels:['Desktop','Mobile'], datasets:[{ data:[desktop,mobile], backgroundColor:['rgba(0,240,255,0.7)','rgba(168,85,247,0.7)'], borderRadius:6, borderWidth:0 }] },
+            options: { responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{display:false}}} }
+        });
+    }
+}
+
+function updateCharts() {
+    if (chartVisits) { chartVisits.destroy(); }
+    if (chartBrowser) { chartBrowser.destroy(); }
+    if (chartDevice) { chartDevice.destroy(); }
+    renderCharts();
+}
+
+/* ══════════════════════════════════════════
+   MAP
+══════════════════════════════════════════ */
+function initMap() {
+    if (map) return;
+    map = L.map('visitorMap', { zoomControl:true, scrollWheelZoom:false }).setView([20, 0], 1);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap', maxZoom: 10
+    }).addTo(map);
+    markersLayer = L.layerGroup().addTo(map);
+    updateMapMarkers();
+}
+
+function updateMapMarkers() {
+    if (!markersLayer) return;
+    markersLayer.clearLayers();
+    const seen = {};
+    allVisits.forEach(v => {
+        if (v.lat && v.lon) {
+            const key = `${v.lat.toFixed(1)},${v.lon.toFixed(1)}`;
+            seen[key] = (seen[key] || 0) + 1;
+        }
+    });
+    Object.entries(seen).forEach(([key, count]) => {
+        const [lat, lon] = key.split(',').map(Number);
+        const radius = Math.max(6, Math.min(18, 6 + count * 2));
+        L.circleMarker([lat, lon], {
+            radius, color:'#00f0ff', fillColor:'#00f0ff', fillOpacity:0.6, weight:1
+        }).bindTooltip(`${count} visit${count>1?'s':''}`, {permanent:false}).addTo(markersLayer);
+    });
+}
+
+/* ══════════════════════════════════════════
+   COUNTRY LIST
+══════════════════════════════════════════ */
+function renderCountryList() {
+    const cMap = {};
+    allVisits.forEach(v => { const c = v.country||'Unknown'; cMap[c]=(cMap[c]||0)+1; });
+    const sorted = Object.entries(cMap).sort((a,b)=>b[1]-a[1]);
+    const max = sorted[0]?.[1] || 1;
+    const container = document.getElementById('countryList');
+    if (!container) return;
+    if (sorted.length === 0) { container.innerHTML='<p style="color:var(--text2);font-size:0.8rem;padding:0.5rem;">No data yet.</p>'; return; }
+    container.innerHTML = sorted.map(([country,count]) => `
+        <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+            <span style="font-size:0.8rem;flex:1;font-family:var(--code);color:var(--text);">${country}</span>
+            <div style="width:80px;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">
+                <div style="height:100%;width:${(count/max*100).toFixed(0)}%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:3px;"></div>
+            </div>
+            <span style="font-family:var(--code);font-size:0.75rem;color:var(--cyan);min-width:24px;text-align:right;">${count}</span>
+        </div>
+    `).join('');
+}
+
+/* ══════════════════════════════════════════
+   TABLE
+══════════════════════════════════════════ */
+function renderTable() {
+    const tbody = document.getElementById('visitorTableBody');
+    const empty = document.getElementById('emptyState');
+    const pag   = document.getElementById('pagination');
+
+    if (filteredVisits.length === 0) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        pag.innerHTML = '';
+        return;
+    }
+    empty.style.display = 'none';
+
+    const total = filteredVisits.length;
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+    if (currentPage > totalPages) currentPage = 1;
+    const start = (currentPage-1)*PAGE_SIZE;
+    const pageVisits = filteredVisits.slice(start, start+PAGE_SIZE);
+
+    tbody.innerHTML = pageVisits.map((v, i) => {
+        const num = start + i + 1;
+        const timeAgo = formatTimeAgo(v.timestamp);
+        const fullTime = new Date(v.timestamp).toLocaleString();
+        const devBadge = v.device==='Mobile'
+            ? '<span class="badge mobile">📱 Mobile</span>'
+            : '<span class="badge desktop">🖥 Desktop</span>';
+        const refBadge = v.referrer === 'Direct'   ? '<span class="badge direct">Direct</span>'
+                       : v.referrer === 'Google'   ? '<span class="badge google">Google</span>'
+                       : v.referrer === 'LinkedIn' ? '<span class="badge linkedin">LinkedIn</span>'
+                       : v.referrer === 'GitHub'   ? '<span class="badge github">GitHub</span>'
+                       : `<span class="badge">${esc(v.referrer)}</span>`;
+        const flag = getFlag(v.country_code);
+        return `<tr>
+            <td style="color:var(--text2);">${num}</td>
+            <td class="time-ago" title="${fullTime}">${timeAgo}</td>
+            <td><span class="flag">${flag}</span> ${esc(v.country||'Unknown')}</td>
+            <td>${esc(v.city||'—')}</td>
+            <td style="color:var(--text2);">${esc(v.ip||'Hidden')}</td>
+            <td>${esc(v.browser||'Unknown')}</td>
+            <td>${esc(v.os||'Unknown')}</td>
+            <td>${devBadge}</td>
+            <td>${refBadge}</td>
+            <td style="color:var(--text2);">${esc(v.screen||'—')}</td>
+            <td style="color:var(--text2);">${esc(v.language||'—')}</td>
+            <td style="color:var(--text2);font-style:italic;">Not available</td>
+        </tr>`;
+    }).join('');
+
+    // Pagination
+    let pagHTML = '';
+    pagHTML += `<button class="page-btn" onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}>◀</button>`;
+    for (let p = Math.max(1,currentPage-2); p <= Math.min(totalPages,currentPage+2); p++) {
+        pagHTML += `<button class="page-btn ${p===currentPage?'active':''}" onclick="changePage(${p})">${p}</button>`;
+    }
+    pagHTML += `<button class="page-btn" onclick="changePage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>▶</button>`;
+    pagHTML += `<span style="font-size:0.72rem;color:var(--text2);font-family:var(--code);margin-left:0.5rem;">${total} total</span>`;
+    pag.innerHTML = pagHTML;
+}
+
+function changePage(p) {
+    const total = Math.ceil(filteredVisits.length/PAGE_SIZE);
+    if (p < 1 || p > total) return;
+    currentPage = p;
+    renderTable();
+}
+
+function filterTable() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const dev = document.getElementById('deviceFilter').value;
+    const country = document.getElementById('countryFilter').value;
+    filteredVisits = allVisits.filter(v => {
+        const matchQ = !q || JSON.stringify(v).toLowerCase().includes(q);
+        const matchDev = !dev || v.device === dev;
+        const matchC = !country || v.country === country;
+        return matchQ && matchDev && matchC;
+    });
+    currentPage = 1;
+    renderTable();
+}
+
+function populateFilters() {
+    const countries = [...new Set(allVisits.map(v=>v.country).filter(Boolean))].sort();
+    const sel = document.getElementById('countryFilter');
+    sel.innerHTML = '<option value="">All Countries</option>' +
+        countries.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+}
+
+/* ══════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════ */
+function esc(str) {
+    return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatTimeAgo(ts) {
+    const d = Date.now() - new Date(ts).getTime();
+    if (d < 60000)    return 'Just now';
+    if (d < 3600000)  return Math.floor(d/60000)   + 'm ago';
+    if (d < 86400000) return Math.floor(d/3600000)  + 'h ago';
+    if (d < 604800000)return Math.floor(d/86400000) + 'd ago';
+    return new Date(ts).toLocaleDateString();
+}
+
+function getFlag(cc) {
+    if (!cc || cc==='XX') return '🌐';
+    try { return String.fromCodePoint(...[...cc.toUpperCase()].map(c=>0x1F1E0+c.charCodeAt(0)-65)); }
+    catch { return '🌐'; }
+}
+
+/* ══════════════════════════════════════════
+   OWNER TOGGLE
+══════════════════════════════════════════ */
+function initOwnerToggle() {
+    const isOwner = localStorage.getItem('vs_portfolio_owner') === '1';
+    const tog = document.getElementById('ownerToggle');
+    const lbl = document.getElementById('ownerToggleLabel');
+    if (isOwner) { tog.classList.add('on'); lbl.textContent='ON'; }
+    else { tog.classList.remove('on'); lbl.textContent='OFF'; }
+}
+function toggleOwnerMode() {
+    const tog = document.getElementById('ownerToggle');
+    const lbl = document.getElementById('ownerToggleLabel');
+    const current = localStorage.getItem('vs_portfolio_owner') === '1';
+    if (current) { localStorage.removeItem('vs_portfolio_owner'); tog.classList.remove('on'); lbl.textContent='OFF'; }
+    else { localStorage.setItem('vs_portfolio_owner','1'); tog.classList.add('on'); lbl.textContent='ON'; }
+}
+
+/* ══════════════════════════════════════════
+   CONFIG SAVE
+══════════════════════════════════════════ */
+function saveConfig() {
+    const bin = document.getElementById('cfgBinId').value.trim();
+    const key = document.getElementById('cfgApiKey').value.trim();
+    if (!bin || !key) { alert('Please fill both JSONBin Bin ID and Master Key.'); return; }
+    localStorage.setItem('vs_cfg_bin', bin);
+    localStorage.setItem('vs_cfg_key', key);
+    localStorage.setItem('vs_cfg_mode', 'cloud');
+    alert('Config saved! Reloading to switch to Cloud Mode...');
+    location.reload();
+}
+
+function updateModeBadge() {
+    const badge = document.getElementById('modeBadge');
+    if (USE_JSONBIN) {
+        badge.textContent = '☁ CLOUD MODE';
+        badge.className = 'mode-badge cloud';
+    } else {
+        badge.textContent = '💾 LOCAL MODE';
+        badge.className = 'mode-badge local';
+    }
+}
+
+/* ══════════════════════════════════════════
+   EXPORT CSV
+══════════════════════════════════════════ */
+function exportCSV() {
+    if (allVisits.length === 0) { alert('No visitor data to export.'); return; }
+    const headers = ['#','Timestamp','IP','Country','City','Region','Browser','OS','Device','Language','Screen','Referrer','Timezone'];
+    const rows = allVisits.map((v,i) => [
+        i+1, v.timestamp, v.ip, v.country, v.city, v.region,
+        v.browser, v.os, v.device, v.language, v.screen, v.referrer, v.timezone
+    ].map(f => `"${String(f||'').replace(/"/g,'""')}"`));
+    const csv = [headers.join(','), ...rows.map(r=>r.join(','))].join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url;
+    a.download = `portfolio_visitors_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
