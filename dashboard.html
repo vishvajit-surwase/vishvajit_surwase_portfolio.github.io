@@ -966,10 +966,50 @@ function toggleOwnerMode() {
 /* ══════════════════════════════════════════
    CONFIG SAVE
 ══════════════════════════════════════════ */
-function saveConfig() {
+async function saveConfig() {
     const bin = document.getElementById('cfgBinId').value.trim();
     const key = document.getElementById('cfgApiKey').value.trim();
     if (!bin || !key) { alert('Please fill both JSONBin Bin ID and Master Key.'); return; }
+    
+    // Attempt to sync existing local visits on this browser to the new cloud bin
+    const local = localStorage.getItem('vs_visits');
+    let localVisits = [];
+    if (local) {
+        try { localVisits = JSON.parse(local).visits || []; } catch(e){}
+    }
+    
+    if (localVisits.length > 0) {
+        const proceed = confirm(`Found ${localVisits.length} local visits on this browser. Sync them to the cloud bin so you don't lose them?`);
+        if (proceed) {
+            try {
+                // Fetch current cloud visits
+                const getRes = await fetch(`https://api.jsonbin.io/v3/b/${bin}/latest`, {
+                    headers: { 'X-Master-Key': key }
+                });
+                const cloudData = await getRes.json();
+                let cloudVisits = cloudData.record?.visits || [];
+                
+                // Merge (avoid duplicates)
+                const seenIds = new Set(cloudVisits.map(v => v.id));
+                localVisits.forEach(v => {
+                    if (!seenIds.has(v.id)) {
+                        cloudVisits.unshift(v);
+                    }
+                });
+                
+                // Save to cloud bin
+                await fetch(`https://api.jsonbin.io/v3/b/${bin}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': key },
+                    body: JSON.stringify({ visits: cloudVisits })
+                });
+                alert('Successfully synced local data to the cloud bin!');
+            } catch(e) {
+                alert('Failed to sync local data to the cloud bin. Switching modes anyway.');
+            }
+        }
+    }
+
     localStorage.setItem('vs_cfg_bin', bin);
     localStorage.setItem('vs_cfg_key', key);
     localStorage.setItem('vs_cfg_mode', 'cloud');
